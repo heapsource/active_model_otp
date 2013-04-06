@@ -1,6 +1,6 @@
-# HasOneTimePassword
+# ActiveModel::Otp
 
-TODO: Write a gem description
+Adds methods to set and authenticate against one time passwords. Inspired in AM::SecurePassword
 
 ## Installation
 
@@ -19,7 +19,7 @@ Or install it yourself as:
 ## Usage
 
 ### Setting Model
-Add otp_secret_key to your model
+Add otp_secret_key to your model:
 
     rails g migration AddOtpSecretKeyToUsers otp_secret_key:string
 
@@ -28,6 +28,8 @@ class User < ActiveRecord::Base
   has_otp_password
 end
 ```
+
+The otp_secret_key is saved automatically when a object is created
 
 ### Authenticating using a code
 
@@ -56,6 +58,8 @@ user.provision_uri # => 'otpauth://totp/alice@google.com?secret=JBSWY3DPEHPK3PXP
 #### Generating QR Code with rqrcode and chunky_png
 
 #### Sendind code via email with Twilio
+
+#### Using with Mongoid
 
 ## Contributing
 
