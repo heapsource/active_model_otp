@@ -1,4 +1,5 @@
 require "active_model"
+require "active_support/core_ext/class/attribute_accessors"
 require "rotp"
 require "active_model/otp"
 

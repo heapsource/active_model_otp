@@ -11,7 +11,7 @@ module ActiveModel
 
         include InstanceMethodsOnActivation
 
-        before_create { self.otp_secret_key = ROTP::Base32.random_base32 }
+        before_create { self.otp_column = ROTP::Base32.random_base32 }
 
         if respond_to?(:attributes_protected_by_default)
           def self.attributes_protected_by_default #:nodoc:
@@ -31,7 +31,11 @@ module ActiveModel
       end
 
       def otp_column
-        self.send(self.class.otp_secret_key)
+        self.send(self.class.otp_column_name)
+      end
+
+      def otp_column=(attr)
+        self.send("#{self.class.otp_column_name}=", attr)
       end
 
     end

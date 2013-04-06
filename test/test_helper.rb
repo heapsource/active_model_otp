@@ -8,3 +8,5 @@ require "rubygems"
 require "active_model_otp"
 require "minitest/unit"
 require "minitest/autorun"
+
+Dir["models/*.rb"].each {|file| require file }
