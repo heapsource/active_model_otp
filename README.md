@@ -34,15 +34,17 @@ The otp_secret_key is saved automatically when a object is created
 ### Authenticating using a code
 
 ```ruby
-user.authenticate_otp('123456') # => true
+user.authenticate_otp('186522') # => true
 sleep 30
-user.authenticate_otp('123456') # => false
+user.authenticate_otp('186522') # => false
 ```
 
 ### Getting current code (ex. to send via SMS)
 
 ```ruby
-user.otp_code # => '123456'
+user.otp_code # => '186522'
+sleep 30
+user.otp_code # => '850738'
 ```
 
 ### Getting provision URI (to generate QR codes compatibles with Google Authenticator app)
