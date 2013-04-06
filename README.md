@@ -25,7 +25,7 @@ Add otp_secret_key to your model:
 
 ```ruby
 class User < ActiveRecord::Base
-  has_otp_password
+  has_one_time_password
 end
 ```
 
