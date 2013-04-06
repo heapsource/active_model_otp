@@ -13,9 +13,8 @@ class OtpTest < MiniTest::Unit::TestCase
   end
 
   def test_authenticate_user
-    totp = ROTP::TOTP.new(@user.otp_secret_key)
     assert !@user.authenticate_otp("wrong")
-    assert @user.authenticate_otp(totp.now)
+    assert @user.authenticate_otp(@user.otp_code)
   end
 
   def test_callback_visitor
@@ -23,8 +22,7 @@ class OtpTest < MiniTest::Unit::TestCase
   end
 
   def test_authenticate_user
-    totp = ROTP::TOTP.new(@visitor.otp_token)
     assert !@visitor.authenticate_otp("wrong")
-    assert @visitor.authenticate_otp(totp.now)
+    assert @visitor.authenticate_otp(@visitor.otp_code)
   end
 end

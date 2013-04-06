@@ -26,6 +26,10 @@ module ActiveModel
         ROTP::TOTP.new(self.otp_column).verify(code)
       end
 
+      def otp_code
+        ROTP::TOTP.new(self.otp_column).now
+      end
+
       def provisioning_uri
         ROTP::TOTP.new(self.otp_column).provisioning_url(self.email)
       end
