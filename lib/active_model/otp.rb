@@ -6,9 +6,7 @@ module ActiveModel
       def has_one_time_password(options = {})
         include InstanceMethodsOnActivation
 
-        if options.fetch(:validations, true)
-          before_create { self.otp_secret_key = ROTP::Base32.random_base32 }
-        end
+        before_create { self.otp_secret_key = ROTP::Base32.random_base32 }
 
         if respond_to?(:attributes_protected_by_default)
           def self.attributes_protected_by_default #:nodoc:
