@@ -18,16 +18,22 @@ module ActiveModel
     end
 
     module InstanceMethodsOnActivation
-      def authenticate_otp(code)
-        ROTP::TOTP.new(self.otp_secret_key).verify(code)
+      def authenticate_otp(code, options = {})
+        totp = ROTP::TOTP.new(self.otp_secret_key)
+        if drift = options[:drift]
+          totp.verify_with_drift(code, drift)
+        else
+          totp.verify(code)
+        end
       end
 
-      def otp_code
-        ROTP::TOTP.new(self.otp_secret_key).now
+      def otp_code(time = Time.now)
+        ROTP::TOTP.new(self.otp_secret_key).at(time)
       end
 
-      def provisioning_uri
-        ROTP::TOTP.new(self.otp_secret_key).provisioning_url(self.email)
+      def provisioning_uri(account = nil)
+        account ||= self.email if self.respond_to?(:email)
+        ROTP::TOTP.new(self.otp_secret_key).provisioning_uri(account)
       end
 
     end
