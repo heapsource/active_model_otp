@@ -39,6 +39,14 @@ sleep 30
 user.authenticate_otp('186522') # => false
 ```
 
+### Authenticating using a slightly old code
+
+```ruby
+user.authenticate_otp('186522') # => true
+sleep 30
+user.authenticate_otp('186522', drift: 60) # => true
+```
+
 ### Getting current code (ex. to send via SMS)
 
 ```ruby
