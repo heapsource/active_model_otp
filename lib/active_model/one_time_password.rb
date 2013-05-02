@@ -1,5 +1,5 @@
 module ActiveModel
-  module Otp
+  module OneTimePassword
     extend ActiveSupport::Concern
 
     module ClassMethods

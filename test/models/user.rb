@@ -1,7 +1,7 @@
 class User
   extend ActiveModel::Callbacks
   include ActiveModel::Validations
-  include ActiveModel::Otp
+  include ActiveModel::OneTimePassword
 
   define_model_callbacks :create
   attr_accessor :otp_secret_key, :email
