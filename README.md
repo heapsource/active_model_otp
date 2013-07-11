@@ -1,6 +1,6 @@
 # ActiveModel::Otp
 
-Adds methods to set and authenticate against one time passwords. Inspired in AM::SecurePassword
+**ActiveModel::Otp** makes adding **Two Factor Authentication**(TFA) to a model simple, let's see what's required to get AMo::Otp working in our Application, using Rails 4.0 (AMo::Otp is also compatible with Rails 3.x versions) we're going to use an User model and some authentication to it. Inspired in AM::SecurePassword
 
 ## Installation
 
