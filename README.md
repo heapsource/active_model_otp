@@ -40,8 +40,9 @@ end
 
 ##Usage
 
-The has_one_time_password sentence provides to the model some useful methods in order to implement our TFA system. 
-The otp_secret_key is saved automatically when a object is created, otp_secret_key is generated according to [RFC 4226](http://tools.ietf.org/html/rfc4226) and the [HOTP RFC](http://tools.ietf.org/html/draft-mraihi-totp-timebased-00). This is compatible with Google Authenticator apps available for Android and iPhone, and now in use on GMail.
+The has_one_time_password sentence provides to the model some useful methods in order to implement our TFA system. AMo:Otp generates one time passwords according to [RFC 4226](http://tools.ietf.org/html/rfc4226) and the [HOTP RFC](http://tools.ietf.org/html/draft-mraihi-totp-timebased-00). This is compatible with Google Authenticator apps available for Android and iPhone, and now in use on GMail.
+
+The otp_secret_key is saved automatically when a object is created, 
 
 ```ruby
 user = User.create(email: "hello@heapsource.com")
@@ -113,6 +114,8 @@ user.email = 'roberto@heapsource.com'
 user.otp_secret_key = "2z6hxkdwi3uvrnpn"
 puts "Current code #{user.otp_code}"
 ```
+
+**Note:** otp_secret_key must be generated using RFC 3548 base32 key strings (for compatilibity with google authenticator)
 
 ### Useful Examples
 
