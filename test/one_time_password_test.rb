@@ -27,8 +27,8 @@ class OtpTest < MiniTest::Unit::TestCase
   end
 
   def test_otp_code
-    assert_match(/\d{6}/, @user.otp_code.to_s)
-    assert_match(/\d{6}/, @visitor.otp_code.to_s)
+    assert_match(/\d{5,6}/, @user.otp_code.to_s)
+    assert_match(/\d{5,6}/, @visitor.otp_code.to_s)
   end
 
   def test_provisioning_uri_with_provided_account
