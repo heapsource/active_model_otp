@@ -80,11 +80,11 @@ user.authenticate_otp('186522', drift: 60) # => true
 The library works with the Google Authenticator iPhone and Android app, and also includes the ability to generate provisioning URI's to use with the QR Code scanner built into the app.
 
 ```ruby
-# Use you user's emails for generate the provision_url
-user.provision_uri # => 'otpauth://totp/hello@heapsource.com?secret=2z6hxkdwi3uvrnpn'
+# Use you user's emails for generate the provisioning_url
+user.provisioning_uri # => 'otpauth://totp/hello@heapsource.com?secret=2z6hxkdwi3uvrnpn'
 
-# Use a custom fied for generate the provision_url
-user.provision_uri("hello") # => 'otpauth://totp/hello?secret=2z6hxkdwi3uvrnpn'
+# Use a custom fied for generate the provisioning_url
+user.provisioning_uri("hello") # => 'otpauth://totp/hello?secret=2z6hxkdwi3uvrnpn'
 ```
 
 This can then be rendered as a QR Code which can then be scanned and added to the users list of OTP credentials.
