@@ -121,7 +121,6 @@ puts "Current code #{user.otp_code}"
 
 - [Generate QR code with rqrcode gem](https://github.com/heapsource/active_model_otp/wiki/Generate-QR-code-with-rqrcode-gem)
 - Generating QR Code with Google Charts API
-- Generating QR Code with rqrcode and chunky_png
 - Sendind code via email with Twilio
 - Using with Mongoid
 
