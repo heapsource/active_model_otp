@@ -30,8 +30,8 @@ module ActiveModel
         end
       end
 
-      def otp_code(time = Time.now)
-        ROTP::TOTP.new(self.otp_column).at(time, true)
+      def otp_code(time = Time.now, padded = true)
+        ROTP::TOTP.new(self.otp_column).at(time, padded)
       end
 
       def provisioning_uri(account = nil)
