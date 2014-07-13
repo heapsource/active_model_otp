@@ -30,8 +30,15 @@ module ActiveModel
         end
       end
 
-      def otp_code(time = Time.now, padded = true)
-        ROTP::TOTP.new(self.otp_column).at(time, padded)
+      def otp_code(options = {})
+        if options.is_a? Hash
+          time = options.fetch(:time, Time.now)
+          padding = options.fetch(:padding, true)
+        else
+          time = options
+          padding = true
+        end
+        ROTP::TOTP.new(self.otp_column).at(time, padding)
       end
 
       def provisioning_uri(account = nil)
