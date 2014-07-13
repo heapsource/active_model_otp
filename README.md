@@ -42,12 +42,12 @@ end
 
 The has_one_time_password sentence provides to the model some useful methods in order to implement our TFA system. AMo:Otp generates one time passwords according to [RFC 4226](http://tools.ietf.org/html/rfc4226) and the [HOTP RFC](http://tools.ietf.org/html/draft-mraihi-totp-timebased-00). This is compatible with Google Authenticator apps available for Android and iPhone, and now in use on GMail.
 
-The otp_secret_key is saved automatically when a object is created, 
+The otp_secret_key is saved automatically when a object is created,
 
 ```ruby
 user = User.create(email: "hello@heapsource.com")
 user.otp_secret_key
- => "jt3gdd2qm6su5iqh" 
+ => "jt3gdd2qm6su5iqh"
 ```
 
 **Note:** You can fork the applications for [iPhone](https://github.com/heapsource/google-authenticator) & [Android](https://github.com/heapsource/google-authenticator.android) and customize it
@@ -57,6 +57,12 @@ user.otp_secret_key
 user.otp_code # => '186522'
 sleep 30
 user.otp_code # => '850738'
+
+# Override current time
+user.otp_code(time: Time.now + 3600) # => '317438'
+
+# Don't zero-pad to six digits
+user.otp_code(padding: false) # => '438'
 ```
 
 ### Authenticating using a code
