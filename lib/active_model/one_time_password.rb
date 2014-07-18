@@ -5,12 +5,13 @@ module ActiveModel
     module ClassMethods
       def has_one_time_password(options = {})
 
-        cattr_accessor :otp_column_name
+        cattr_accessor  :otp_column_name
+        attr_accessible :otp_column
         self.otp_column_name = (options[:column_name] || "otp_secret_key").to_s
 
         include InstanceMethodsOnActivation
 
-        before_create { self.otp_column = ROTP::Base32.random_base32 }
+        before_create { self.otp_column ||= ROTP::Base32.random_base32 }
 
         if respond_to?(:attributes_protected_by_default)
           def self.attributes_protected_by_default #:nodoc:
