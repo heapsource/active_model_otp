@@ -39,7 +39,7 @@ end
 
 Note: If you're adding this to an existing user model you'll need to generate *otp_secret_key* with a migration like:
 ```ruby
-User.all.each { |user| user.update_attribute(:otp_colum, ROTP::Base32.random_base32) }
+User.all.each { |user| user.update_attribute(:otp_secret_key, ROTP::Base32.random_base32) }
 ```
 
 
