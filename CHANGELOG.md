@@ -1,3 +1,4 @@
+#unreleased
 #v1.0.0
 - Avoid overriding predefined otp_column value when initializing resource (Ilan Stern) https://github.com/heapsource/active_model_otp/pull/10
 - Pad OTP codes with less than 6 digits (Johan Brissmyr) https://github.com/heapsource/active_model_otp/pull/7
