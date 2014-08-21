@@ -42,6 +42,14 @@ Note: If you're adding this to an existing user model you'll need to generate *o
 User.all.each { |user| user.update_attribute(:otp_secret_key, ROTP::Base32.random_base32) }
 ```
 
+For use a custom column for store the secret key field you can us the column_name option
+
+```ruby
+class User < ActiveRecord::Base
+  has_one_time_password column_name: :my_otp_secret_column
+end
+```
+
 
 ##Usage
 
