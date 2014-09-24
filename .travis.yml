@@ -6,7 +6,5 @@ matrix:
   include:
     - rvm: jruby
       env: JRUBY_OPTS="--1.9 --server -Xcext.enabled=true"
-    - rvm: jruby-head
-      env: JRUBY_OPTS="--server -Xcext.enabled=false -Xcompile.invokedynamic=false"
 notifications:
   email: false
