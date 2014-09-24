@@ -10,7 +10,7 @@ module ActiveModel
 
         include InstanceMethodsOnActivation
 
-        before_create { self.otp_column ||= ROTP::Base32.random_base32 }
+        before_create { self.otp_regenerate_secret if !self.otp_column}
 
         if respond_to?(:attributes_protected_by_default)
           def self.attributes_protected_by_default #:nodoc:
@@ -21,6 +21,10 @@ module ActiveModel
     end
 
     module InstanceMethodsOnActivation
+      def otp_regenerate_secret
+        self.otp_column = ROTP::Base32.random_base32
+      end
+
       def authenticate_otp(code, options = {})
         totp = ROTP::TOTP.new(self.otp_column)
         if drift = options[:drift]
