@@ -6,5 +6,5 @@ class User
   define_model_callbacks :create
   attr_accessor :otp_secret_key, :email
 
-  has_one_time_password length:4
+  has_one_time_password length: 4
 end
