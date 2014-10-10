@@ -1,4 +1,8 @@
 [![Build Status](https://travis-ci.org/heapsource/active_model_otp.png)](https://travis-ci.org/heapsource/active_model_otp)
+[![Gem Version](https://badge.fury.io/rb/active_model_otp.svg)](http://badge.fury.io/rb/active_model_otp)
+[![Dependency Status](https://gemnasium.com/heapsource/active_model_otp.svg)](https://gemnasium.com/heapsource/active_model_otp)
+[![Code Climate](https://codeclimate.com/github/heapsource/active_model_otp/badges/gpa.svg)](https://codeclimate.com/github/heapsource/active_model_otp)
+
 
 # ActiveModel::Otp
 
