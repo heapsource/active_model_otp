@@ -1,10 +1,11 @@
 require "test_helper"
 
-class OtpTest < Minitest::Test
+class OtpTest < MiniTest::Unit::TestCase
   def setup
     @user = User.new
     @user.email = 'roberto@heapsource.com'
     @user.run_callbacks :create
+
     @visitor = Visitor.new
     @visitor.email = 'roberto@heapsource.com'
     @visitor.run_callbacks :create
@@ -28,26 +29,26 @@ class OtpTest < Minitest::Test
   end
 
   def test_otp_code
-    assert_match(/^\d{4}$/, @user.otp_code.to_s)
-    assert_match(/^\d{6}$/, @visitor.otp_code.to_s)
+    assert_match(/^\d{6}$/, @user.otp_code.to_s)
+    assert_match(/^\d{4}$/, @visitor.otp_code.to_s)
   end
 
   def test_otp_code_with_specific_length
-    assert_match(/^\d{4}$/, @user.otp_code(time: 2160, padding: true).to_s)
-    assert_operator(@user.otp_code(time: 2160, padding: false).to_s.length, :<= , 4)
+    assert_match(/^\d{4}$/, @visitor.otp_code(time: 2160, padding: true).to_s)
+    assert_operator(@visitor.otp_code(time: 2160, padding: false).to_s.length, :<= , 4)
   end
 
   def test_otp_code_without_specific_length
-   assert_match(/^\d{6}$/, @visitor.otp_code(time: 2160, padding: true).to_s)
-   assert_operator(@visitor.otp_code(time: 2160, padding: false).to_s.length, :<= , 6)
+   assert_match(/^\d{6}$/, @user.otp_code(time: 2160, padding: true).to_s)
+   assert_operator(@user.otp_code(time: 2160, padding: false).to_s.length, :<= , 6)
   end
 
   def test_otp_code_padding
     @user.otp_column = 'kw5jhligwqaiw7jc'
-    assert_match(/^\d{6}$/, @visitor.otp_code(time: 2160, padding: true).to_s)
+    assert_match(/^\d{6}$/, @user.otp_code(time: 2160, padding: true).to_s)
     # Modified this spec as it is not guranteed that without padding we will always
     # get a 3 digit number
-    assert_operator(@visitor.otp_code(time: 2160, padding: false).to_s.length, :<= , 6)
+    assert_operator(@user.otp_code(time: 2160, padding: false).to_s.length, :<= , 6)
   end
 
   def test_provisioning_uri_with_provided_account
