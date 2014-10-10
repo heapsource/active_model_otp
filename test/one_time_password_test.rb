@@ -1,6 +1,6 @@
 require "test_helper"
 
-class OtpTest < MiniTest::Unit::TestCase
+class OtpTest < Minitest::Test
   def setup
     @user = User.new
     @user.email = 'roberto@heapsource.com'

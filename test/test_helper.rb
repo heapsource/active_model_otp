@@ -6,7 +6,7 @@ $LOAD_PATH.unshift libdir unless $LOAD_PATH.include?(libdir)
 
 require "rubygems"
 require "active_model_otp"
-require "minitest/unit"
 require "minitest/autorun"
+require "minitest/unit"
 
 Dir["models/*.rb"].each {|file| require file }
