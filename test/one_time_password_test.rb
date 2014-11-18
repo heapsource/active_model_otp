@@ -61,6 +61,13 @@ class OtpTest < MiniTest::Unit::TestCase
     assert_match %r{otpauth://totp/roberto@heapsource\.com\?secret=\w{16}}, @visitor.provisioning_uri
   end
 
+  def test_provisioning_uri_with_options
+    assert_match  %r{otpauth://totp/roberto@heapsource\.com\?issuer=Example&secret=\w{16}},@user.provisioning_uri(nil,issuer: "Example")
+    assert_match %r{otpauth://totp/roberto@heapsource\.com\?issuer=Example&secret=\w{16}}, @visitor.provisioning_uri(nil,issuer: "Example")
+    assert_match %r{otpauth://totp/roberto\?issuer=Example&secret=\w{16}}, @user.provisioning_uri("roberto", issuer: "Example")
+    assert_match %r{otpauth://totp/roberto\?issuer=Example&secret=\w{16}}, @visitor.provisioning_uri("roberto", issuer: "Example")
+  end
+
   def test_regenerate_otp
     secret = @user.otp_column
     @user.otp_regenerate_secret

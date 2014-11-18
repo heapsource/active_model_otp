@@ -49,9 +49,9 @@ module ActiveModel
         ROTP::TOTP.new(self.otp_column, {digits: self.otp_digits}).at(time, padding)
       end
 
-      def provisioning_uri(account = nil)
+      def provisioning_uri(account = nil,options={})
         account ||= self.email if self.respond_to?(:email)
-        ROTP::TOTP.new(self.otp_column).provisioning_uri(account)
+        ROTP::TOTP.new(self.otp_column,options).provisioning_uri(account)
       end
 
       def otp_column
