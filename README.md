@@ -6,7 +6,7 @@
 
 # ActiveModel::Otp
 
-**ActiveModel::Otp** makes adding **Two Factor Authentication**(TFA) to a model simple, let's see what's required to get AMo::Otp working in our Application, using Rails 4.0 (AMo::Otp is also compatible with Rails 3.x versions) we're going to use an User model and some authentication to it. Inspired in AM::SecurePassword
+**ActiveModel::Otp** makes adding **Two Factor Authentication** (TFA) to a model simple. Let's see what's required to get AMo::Otp working in our Application, using Rails 4.0 (AMo::Otp is also compatible with Rails 3.x versions). We're going to use a User model and some authentication to do it. Inspired by AM::SecurePassword
 
 ## Installation
 
@@ -18,7 +18,7 @@ And then execute:
 
     $ bundle
 
-Or install it yourself as:
+Or install it yourself as follows:
 
     $ gem install active_model_otp
 
@@ -33,7 +33,7 @@ rails g migration AddOtpSecretKeyToUsers otp_secret_key:string
       create    db/migrate/20130707010931_add_otp_secret_key_to_users.rb
 ```
 
-We’ll then need to run rake db:migrate to update the users table in the database. The next step is to update the model code. We need to use has_one_time_password to tell it will be use TFA.
+We’ll then need to run rake db:migrate to update the users table in the database. The next step is to update the model code. We need to use has_one_time_password to make it use TFA.
 
 ```ruby
 class User < ActiveRecord::Base
@@ -46,20 +46,20 @@ Note: If you're adding this to an existing user model you'll need to generate *o
 User.all.each { |user| user.update_attribute(:otp_secret_key, ROTP::Base32.random_base32) }
 ```
 
-For use a custom column for store the secret key field you can us the column_name option, Also is possible to generatea code with a specified length.
+To use a custom column to store the secret key field you can use the column_name option. It is also possible to generate codes with a specified length.
 
 ```ruby
 class User < ActiveRecord::Base
-  has_one_time_password column_name: :my_otp_secret_column, lenght: 4
+  has_one_time_password column_name: :my_otp_secret_column, length: 4
 end
 ```
 
 
-##Usage
+## Usage
 
-The has_one_time_password sentence provides to the model some useful methods in order to implement our TFA system. AMo:Otp generates one time passwords according to [RFC 4226](http://tools.ietf.org/html/rfc4226) and the [HOTP RFC](http://tools.ietf.org/html/draft-mraihi-totp-timebased-00). This is compatible with Google Authenticator apps available for Android and iPhone, and now in use on GMail.
+The has_one_time_password statement provides to the model some useful methods in order to implement our TFA system. AMo:Otp generates one time passwords according to [RFC 4226](http://tools.ietf.org/html/rfc4226) and the [HOTP RFC](http://tools.ietf.org/html/draft-mraihi-totp-timebased-00). This is compatible with Google Authenticator apps available for Android and iPhone, and now in use on GMail.
 
-The otp_secret_key is saved automatically when a object is created,
+The otp_secret_key is saved automatically when an object is created,
 
 ```ruby
 user = User.create(email: "hello@heapsource.com")
@@ -67,9 +67,9 @@ user.otp_secret_key
  => "jt3gdd2qm6su5iqh"
 ```
 
-**Note:** You can fork the applications for [iPhone](https://github.com/heapsource/google-authenticator) & [Android](https://github.com/heapsource/google-authenticator.android) and customize it
+**Note:** You can fork the applications for [iPhone](https://github.com/heapsource/google-authenticator) & [Android](https://github.com/heapsource/google-authenticator.android) and customize them
 
-### Getting current code (ex. to send via SMS)
+### Getting current code (e.g. to send via SMS)
 ```ruby
 user.otp_code # => '186522'
 sleep 30
@@ -103,14 +103,14 @@ user.authenticate_otp('186522', drift: 60) # => true
 The library works with the Google Authenticator iPhone and Android app, and also includes the ability to generate provisioning URI's to use with the QR Code scanner built into the app.
 
 ```ruby
-# Use you user's emails for generate the provisioning_url
+# Use your user's email address to generate the provisioning_url
 user.provisioning_uri # => 'otpauth://totp/hello@heapsource.com?secret=2z6hxkdwi3uvrnpn'
 
-# Use a custom fied for generate the provisioning_url
+# Use a custom field to generate the provisioning_url
 user.provisioning_uri("hello") # => 'otpauth://totp/hello?secret=2z6hxkdwi3uvrnpn'
 ```
 
-This can then be rendered as a QR Code which can then be scanned and added to the users list of OTP credentials.
+This can then be rendered as a QR Code which can be scanned and added to the users list of OTP credentials.
 
 ### Working example
 
