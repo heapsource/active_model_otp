@@ -8,9 +8,11 @@ module ActiveModel
 
         cattr_accessor :otp_column_name
         class_attribute :otp_digits
+        class_attribute :topt_interval
 
         self.otp_column_name = (options[:column_name] || "otp_secret_key").to_s
         self.otp_digits = options[:length] || 6
+        self.totp_interval = options[:interval] || ROTP::TOTP::DEFAULT_INTERVAL
 
         include InstanceMethodsOnActivation
 
@@ -30,7 +32,7 @@ module ActiveModel
       end
 
       def authenticate_otp(code, options = {})
-        totp = ROTP::TOTP.new(self.otp_column, {digits: self.otp_digits})
+        totp = ROTP::TOTP.new(self.otp_column, {digits: self.otp_digits, interval: self.totp_interval})
         if drift = options[:drift]
           totp.verify_with_drift(code, drift)
         else
@@ -46,7 +48,7 @@ module ActiveModel
           time = options
           padding = true
         end
-        ROTP::TOTP.new(self.otp_column, {digits: self.otp_digits}).at(time, padding)
+        ROTP::TOTP.new(self.otp_column, {digits: self.otp_digits, interval: self.totp_interval}).at(time, padding)
       end
 
       def provisioning_uri(account = nil,options={})
