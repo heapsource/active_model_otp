@@ -12,7 +12,7 @@ module ActiveModel
 
         self.otp_column_name = (options[:column_name] || "otp_secret_key").to_s
         self.otp_digits = options[:length] || 6
-        self.totp_interval = options[:interval] || ROTP::TOTP::DEFAULT_INTERVAL
+        self.totp_interval = options[:interval] || 30
 
         include InstanceMethodsOnActivation
 
