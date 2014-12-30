@@ -8,7 +8,7 @@ module ActiveModel
 
         cattr_accessor :otp_column_name
         class_attribute :otp_digits
-        class_attribute :topt_interval
+        class_attribute :totp_interval
 
         self.otp_column_name = (options[:column_name] || "otp_secret_key").to_s
         self.otp_digits = options[:length] || 6
