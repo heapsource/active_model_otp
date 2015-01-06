@@ -22,10 +22,13 @@ class OtpTest < MiniTest::Unit::TestCase
 
   def test_authenticate_with_otp_when_drift_is_allowed
     code = @user.otp_code(Time.now - 30)
+    assert !@user.authenticate_otp(code)
     assert @user.authenticate_otp(code, drift: 60)
+  end
 
+  def test_authenticate_with_otp_when_interval_is_set
     code = @visitor.otp_code(Time.now - 30)
-    assert @visitor.authenticate_otp(code, drift: 60)
+    assert @visitor.authenticate_otp(code)
   end
 
   def test_otp_code
