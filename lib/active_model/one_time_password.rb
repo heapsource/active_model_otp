@@ -56,7 +56,10 @@ module ActiveModel
 
       def otp_code(options = {})
         if self.counter_based
-          ROTP::HOTP.new(self.otp_column, {digits: self.otp_digits}).at(self.otp_counter += 1)
+          if options[:auto_increment]
+            self.otp_counter += 1
+          end
+          ROTP::HOTP.new(self.otp_column, {digits: self.otp_digits}).at(self.otp_counter)
         else
           if options.is_a? Hash
             time = options.fetch(:time, Time.now)

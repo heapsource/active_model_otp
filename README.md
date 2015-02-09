@@ -91,6 +91,16 @@ user.opt_counter -= 1
 user.authenticate_otp('186522') # => true
 ```
 
+When retrieving an ```otp_code``` you can also pass the ```auto_increment``` option.
+
+```ruby
+user.opt_code # => '186522'
+user.opt_code # => '186522'
+user.opt_code(auto_increment: true) # => '768273'
+user.opt_code(auto_increment: true) # => '002811'
+user.opt_code # => '002811'
+```
+
 ## Usage
 
 The has_one_time_password statement provides to the model some useful methods in order to implement our TFA system. AMo:Otp generates one time passwords according to [RFC 4226](http://tools.ietf.org/html/rfc4226) and the [HOTP RFC](http://tools.ietf.org/html/draft-mraihi-totp-timebased-00). This is compatible with Google Authenticator apps available for Android and iPhone, and now in use on GMail.
