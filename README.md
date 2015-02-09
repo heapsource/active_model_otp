@@ -54,6 +54,33 @@ class User < ActiveRecord::Base
 end
 ```
 
+## Counter based OTP
+
+An additonal counter field is required in our ``User`` Model
+
+```ruby
+rails g migration AddCounterForOtpToUsers otp_counter:integer
+=>
+      invoke  active_record
+      create    db/migrate/20130707010931_add_counter_for_otp_to_users.rb
+```
+
+In addition set the counter flag option to true
+
+```ruby
+class User < ActiveRecord::Base
+  has_one_time_password counter_based: true
+end
+```
+
+And for a custom counter column
+
+```ruby
+class User < ActiveRecord::Base
+  has_one_time_password counter_based: true, counter_column_name: :my_otp_secret_counter_column
+end
+```
+
 
 ## Usage
 
