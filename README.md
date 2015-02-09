@@ -81,6 +81,15 @@ class User < ActiveRecord::Base
 end
 ```
 
+Authentication is done the same. You can manually adjust the counter for your usage or set auto_increment on success to true.
+
+```ruby
+user.authenticate_otp('186522') # => true
+user.authenticate_otp('186522', auto_increment: true) # => true
+user.authenticate_otp('186522') # => false
+user.opt_counter -= 1
+user.authenticate_otp('186522') # => true
+```
 
 ## Usage
 
