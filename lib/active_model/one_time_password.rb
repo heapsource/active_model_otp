@@ -17,7 +17,7 @@ module ActiveModel
         include InstanceMethodsOnActivation
 
         before_create { self.otp_regenerate_secret if !self.otp_column}
-        before_create { self.otp_regenerate_counter if !self.otp_counter_column}
+        before_create { self.otp_regenerate_counter if self.opt_counter_based && !self.otp_counter}
 
         if respond_to?(:attributes_protected_by_default)
           def self.attributes_protected_by_default #:nodoc:
@@ -76,9 +76,9 @@ module ActiveModel
         account ||= self.email if self.respond_to?(:email)
 
         if self.counter_based
-          ROTP::HOTP.new(self.otp_column,options).provisioning_uri(account)
+          ROTP::HOTP.new(self.otp_column, options).provisioning_uri(account)
         else
-          ROTP::TOTP.new(self.otp_column,options).provisioning_uri(account)
+          ROTP::TOTP.new(self.otp_column, options).provisioning_uri(account)
         end
       end
 
