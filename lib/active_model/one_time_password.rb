@@ -36,7 +36,7 @@ module ActiveModel
       end
 
       def authenticate_otp(code, options = {})
-        if self.counter_based
+        if self.otp_counter_based
           hotp = ROTP::HOTP.new(self.otp_column, {digits: self.otp_digits})
           result = hotp.verify(code, self.otp_counter)
           if result && !options[:auto_increment] #auto_increment default is false, don't update
@@ -54,7 +54,7 @@ module ActiveModel
       end
 
       def otp_code(options = {})
-        if self.counter_based
+        if self.otp_counter_based
           if options[:auto_increment]
             self.otp_counter += 1
           end
@@ -74,7 +74,7 @@ module ActiveModel
       def provisioning_uri(account = nil, options={})
         account ||= self.email if self.respond_to?(:email)
 
-        if self.counter_based
+        if self.otp_counter_based
           ROTP::HOTP.new(self.otp_column, options).provisioning_uri(account)
         else
           ROTP::TOTP.new(self.otp_column, options).provisioning_uri(account)
