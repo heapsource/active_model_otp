@@ -41,7 +41,7 @@ module ActiveModel
           result = hotp.verify(code, self.otp_counter)
           if result && options[:auto_increment]
             self.otp_counter += 1
-            self.save
+            self.save if !self.new_record?
           end
           result
         else
@@ -58,7 +58,7 @@ module ActiveModel
         if self.otp_counter_based
           if options[:auto_increment]
             self.otp_counter += 1
-            self.save
+            self.save if !self.new_record?
           end
           ROTP::HOTP.new(self.otp_column, {digits: self.otp_digits}).at(self.otp_counter)
         else
