@@ -87,18 +87,18 @@ Authentication is done the same. You can manually adjust the counter for your us
 user.authenticate_otp('186522') # => true
 user.authenticate_otp('186522', auto_increment: true) # => true
 user.authenticate_otp('186522') # => false
-user.opt_counter -= 1
+user.otp_counter -= 1
 user.authenticate_otp('186522') # => true
 ```
 
 When retrieving an ```otp_code``` you can also pass the ```auto_increment``` option.
 
 ```ruby
-user.opt_code # => '186522'
-user.opt_code # => '186522'
-user.opt_code(auto_increment: true) # => '768273'
-user.opt_code(auto_increment: true) # => '002811'
-user.opt_code # => '002811'
+user.otp_code # => '186522'
+user.otp_code # => '186522'
+user.otp_code(auto_increment: true) # => '768273'
+user.otp_code(auto_increment: true) # => '002811'
+user.otp_code # => '002811'
 ```
 
 ## Usage

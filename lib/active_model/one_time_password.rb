@@ -11,13 +11,13 @@ module ActiveModel
         self.otp_column_name = (options[:column_name] || "otp_secret_key").to_s
         self.otp_digits = options[:length] || 6
 
-        self.opt_counter_based = (options[:counter_based] || false)
+        self.otp_counter_based = (options[:counter_based] || false)
         self.otp_counter_column_name = (options[:counter_column_name] || "otp_counter").to_s
 
         include InstanceMethodsOnActivation
 
         before_create { self.otp_regenerate_secret if !self.otp_column}
-        before_create { self.otp_regenerate_counter if self.opt_counter_based && !self.otp_counter}
+        before_create { self.otp_regenerate_counter if self.otp_counter_based && !self.otp_counter}
 
         if respond_to?(:attributes_protected_by_default)
           def self.attributes_protected_by_default #:nodoc:
