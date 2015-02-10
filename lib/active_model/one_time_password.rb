@@ -41,6 +41,7 @@ module ActiveModel
           result = hotp.verify(code, self.otp_counter)
           if result && !options[:auto_increment] #auto_increment default is false, don't update
             self.otp_counter += 1
+            self.save
           end
           result
         else
@@ -57,6 +58,7 @@ module ActiveModel
         if self.otp_counter_based
           if options[:auto_increment]
             self.otp_counter += 1
+            self.save
           end
           ROTP::HOTP.new(self.otp_column, {digits: self.otp_digits}).at(self.otp_counter)
         else
