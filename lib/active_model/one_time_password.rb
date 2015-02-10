@@ -21,8 +21,7 @@ module ActiveModel
 
         if respond_to?(:attributes_protected_by_default)
           def self.attributes_protected_by_default #:nodoc:
-            super + [self.otp_column_name]
-            super + [self.otp_counter_column_name]
+            super + [self.otp_column_name, self.otp_counter_column_name]
           end
         end
       end
