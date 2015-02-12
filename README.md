@@ -54,6 +54,49 @@ class User < ActiveRecord::Base
 end
 ```
 
+## Usage
+
+The has_one_time_password statement provides to the model some useful methods in order to implement our TFA system. AMo:Otp generates one time passwords according to [RFC 4226](http://tools.ietf.org/html/rfc4226) and the [HOTP RFC](http://tools.ietf.org/html/draft-mraihi-totp-timebased-00). This is compatible with Google Authenticator apps available for Android and iPhone, and now in use on GMail.
+
+The otp_secret_key is saved automatically when an object is created,
+
+```ruby
+user = User.create(email: "hello@heapsource.com")
+user.otp_secret_key
+ => "jt3gdd2qm6su5iqh"
+```
+
+**Note:** You can fork the applications for [iPhone](https://github.com/heapsource/google-authenticator) & [Android](https://github.com/heapsource/google-authenticator.android) and customize them
+
+### Getting current code (e.g. to send via SMS)
+```ruby
+user.otp_code # => '186522'
+sleep 30
+user.otp_code # => '850738'
+
+# Override current time
+user.otp_code(time: Time.now + 3600) # => '317438'
+
+# Don't zero-pad to six digits
+user.otp_code(padding: false) # => '438'
+```
+
+### Authenticating using a code
+
+```ruby
+user.authenticate_otp('186522') # => true
+sleep 30 # let's wait 30 secs
+user.authenticate_otp('186522') # => false
+```
+
+### Authenticating using a slightly old code
+
+```ruby
+user.authenticate_otp('186522') # => true
+sleep 30 # lets wait again
+user.authenticate_otp('186522', drift: 60) # => true
+```
+
 ## Counter based OTP
 
 An additonal counter field is required in our ``User`` Model
@@ -99,49 +142,6 @@ user.otp_code # => '186522'
 user.otp_code(auto_increment: true) # => '768273'
 user.otp_code(auto_increment: true) # => '002811'
 user.otp_code # => '002811'
-```
-
-## Usage
-
-The has_one_time_password statement provides to the model some useful methods in order to implement our TFA system. AMo:Otp generates one time passwords according to [RFC 4226](http://tools.ietf.org/html/rfc4226) and the [HOTP RFC](http://tools.ietf.org/html/draft-mraihi-totp-timebased-00). This is compatible with Google Authenticator apps available for Android and iPhone, and now in use on GMail.
-
-The otp_secret_key is saved automatically when an object is created,
-
-```ruby
-user = User.create(email: "hello@heapsource.com")
-user.otp_secret_key
- => "jt3gdd2qm6su5iqh"
-```
-
-**Note:** You can fork the applications for [iPhone](https://github.com/heapsource/google-authenticator) & [Android](https://github.com/heapsource/google-authenticator.android) and customize them
-
-### Getting current code (e.g. to send via SMS)
-```ruby
-user.otp_code # => '186522'
-sleep 30
-user.otp_code # => '850738'
-
-# Override current time
-user.otp_code(time: Time.now + 3600) # => '317438'
-
-# Don't zero-pad to six digits
-user.otp_code(padding: false) # => '438'
-```
-
-### Authenticating using a code
-
-```ruby
-user.authenticate_otp('186522') # => true
-sleep 30 # let's wait 30 secs
-user.authenticate_otp('186522') # => false
-```
-
-### Authenticating using a slightly old code
-
-```ruby
-user.authenticate_otp('186522') # => true
-sleep 30 # lets wait again
-user.authenticate_otp('186522', drift: 60) # => true
 ```
 
 ## Google Authenticator Compatible
