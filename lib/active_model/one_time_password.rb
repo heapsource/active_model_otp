@@ -19,7 +19,6 @@ module ActiveModel
         include InstanceMethodsOnActivation
 
         before_create do
-          p "BEFORE CREATE"
           self.otp_regenerate_secret if !otp_column
           self.otp_regenerate_counter if otp_counter_based && !otp_counter
         end
@@ -36,7 +35,7 @@ module ActiveModel
       def otp_regenerate_secret
         self.otp_column = ROTP::Base32.random_base32
       end
-      
+
       def otp_regenerate_counter
         self.otp_counter = 1
       end
@@ -75,12 +74,11 @@ module ActiveModel
             time = options
             padding = true
           end
-          
           ROTP::TOTP.new(otp_column, digits: otp_digits).at(time, padding)
         end
       end
 
-      def provisioning_uri(account = nil, options={})
+      def provisioning_uri(account = nil, options = {})
         account ||= self.email if self.respond_to?(:email)
 
         if otp_counter_based
