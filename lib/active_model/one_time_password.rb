@@ -16,12 +16,14 @@ module ActiveModel
 
         include InstanceMethodsOnActivation
 
-        before_create { self.otp_regenerate_secret if !self.otp_column}
-        before_create { self.otp_regenerate_counter if self.otp_counter_based && !self.otp_counter}
+        before_create {
+          self.otp_regenerate_secret if !self.otp_column
+          self.otp_regenerate_counter if otp_counter_based && !self.otp_counter
+        }
 
         if respond_to?(:attributes_protected_by_default)
           def self.attributes_protected_by_default #:nodoc:
-            super + [self.otp_column_name, self.otp_counter_column_name]
+            super + [otp_column_name, otp_counter_column_name]
           end
         end
       end
@@ -31,13 +33,14 @@ module ActiveModel
       def otp_regenerate_secret
         self.otp_column = ROTP::Base32.random_base32
       end
+      
       def otp_regenerate_counter
         self.otp_counter = 0
       end
 
       def authenticate_otp(code, options = {})
         if self.otp_counter_based
-          hotp = ROTP::HOTP.new(self.otp_column, {digits: self.otp_digits})
+          hotp = ROTP::HOTP.new(self.otp_column, {digits: otp_digits})
           result = hotp.verify(code, self.otp_counter)
           if result && options[:auto_increment]
             self.otp_counter += 1
@@ -45,7 +48,7 @@ module ActiveModel
           end
           result
         else
-          totp = ROTP::TOTP.new(self.otp_column, {digits: self.otp_digits})
+          totp = ROTP::TOTP.new(self.otp_column, {digits: otp_digits})
           if drift = options[:drift]
             totp.verify_with_drift(code, drift)
           else
@@ -55,12 +58,13 @@ module ActiveModel
       end
 
       def otp_code(options = {})
-        if self.otp_counter_based
+        if otp_counter_based
           if options[:auto_increment]
             self.otp_counter += 1
             self.save if !self.new_record?
           end
-          ROTP::HOTP.new(self.otp_column, {digits: self.otp_digits}).at(self.otp_counter)
+          
+          ROTP::HOTP.new(self.otp_column, digits: otp_digits).at(self.otp_counter)
         else
           if options.is_a? Hash
             time = options.fetch(:time, Time.now)
@@ -69,7 +73,8 @@ module ActiveModel
             time = options
             padding = true
           end
-          ROTP::TOTP.new(self.otp_column, {digits: self.otp_digits}).at(time, padding)
+          
+          ROTP::TOTP.new(self.otp_column, digits: otp_digits).at(time, padding)
         end
       end
 
