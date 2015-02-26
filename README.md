@@ -54,7 +54,6 @@ class User < ActiveRecord::Base
 end
 ```
 
-
 ## Usage
 
 The has_one_time_password statement provides to the model some useful methods in order to implement our TFA system. AMo:Otp generates one time passwords according to [RFC 4226](http://tools.ietf.org/html/rfc4226) and the [HOTP RFC](http://tools.ietf.org/html/draft-mraihi-totp-timebased-00). This is compatible with Google Authenticator apps available for Android and iPhone, and now in use on GMail.
@@ -96,6 +95,53 @@ user.authenticate_otp('186522') # => false
 user.authenticate_otp('186522') # => true
 sleep 30 # lets wait again
 user.authenticate_otp('186522', drift: 60) # => true
+```
+
+## Counter based OTP
+
+An additonal counter field is required in our ``User`` Model
+
+```ruby
+rails g migration AddCounterForOtpToUsers otp_counter:integer
+=>
+      invoke  active_record
+      create    db/migrate/20130707010931_add_counter_for_otp_to_users.rb
+```
+
+In addition set the counter flag option to true
+
+```ruby
+class User < ActiveRecord::Base
+  has_one_time_password counter_based: true
+end
+```
+
+And for a custom counter column
+
+```ruby
+class User < ActiveRecord::Base
+  has_one_time_password counter_based: true, counter_column_name: :my_otp_secret_counter_column
+end
+```
+
+Authentication is done the same. You can manually adjust the counter for your usage or set auto_increment on success to true.
+
+```ruby
+user.authenticate_otp('186522') # => true
+user.authenticate_otp('186522', auto_increment: true) # => true
+user.authenticate_otp('186522') # => false
+user.otp_counter -= 1
+user.authenticate_otp('186522') # => true
+```
+
+When retrieving an ```otp_code``` you can also pass the ```auto_increment``` option.
+
+```ruby
+user.otp_code # => '186522'
+user.otp_code # => '186522'
+user.otp_code(auto_increment: true) # => '768273'
+user.otp_code(auto_increment: true) # => '002811'
+user.otp_code # => '002811'
 ```
 
 ## Google Authenticator Compatible
