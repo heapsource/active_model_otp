@@ -1,4 +1,11 @@
 #unreleased
+- Added Counter based OTP (HOTP) (@ResultsMayVary ) https://github.com/heapsource/active_model_otp/pull/19
+- Adding options to provisioning uri, so we can include issuer (@doon) https://github.com/heapsource/active_model_otp/pull/15
+
+#v1.1.0
+- Add function to re-geterante the OTP secret (@TikiTDO) https://github.com/heapsource/active_model_otp/pull/14
+- Added option to pass OTP length (@shivanibhanwal) https://github.com/heapsource/active_model_otp/pull/13
+
 #v1.0.0
 - Avoid overriding predefined otp_column value when initializing resource (Ilan Stern) https://github.com/heapsource/active_model_otp/pull/10
 - Pad OTP codes with less than 6 digits (Johan Brissmyr) https://github.com/heapsource/active_model_otp/pull/7
