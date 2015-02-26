@@ -1,4 +1,4 @@
-Copyright (c) 2013 Guillermo Iguaran, Roberto Miranda, Firebase.co
+Copyright (c) 2013-2015 Roberto Miranda, Guillermo Iguaran and contributors.
 
 MIT License
 
