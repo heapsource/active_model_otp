@@ -1,4 +1,4 @@
-#unreleased
+#v1.2.0
 - Added Counter based OTP (HOTP) (@ResultsMayVary ) https://github.com/heapsource/active_model_otp/pull/19
 - Adding options to provisioning uri, so we can include issuer (@doon) https://github.com/heapsource/active_model_otp/pull/15
 
