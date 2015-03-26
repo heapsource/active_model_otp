@@ -56,7 +56,7 @@ end
 
 ## Usage
 
-The has_one_time_password statement provides to the model some useful methods in order to implement our TFA system. AMo:Otp generates one time passwords according to [TOTP RFC 6238](http://tools.ietf.org/html/rfc4226) and the [HOTP RFC 4226](http://tools.ietf.org/html/rfc4226). This is compatible with Google Authenticator apps available for Android and iPhone, and now in use on GMail.
+The has_one_time_password statement provides to the model some useful methods in order to implement our TFA system. AMo:Otp generates one time passwords according to [TOTP RFC 6238](https://tools.ietf.org/html/rfc6238) and the [HOTP RFC 4226](https://www.ietf.org/rfc/rfc4226). This is compatible with Google Authenticator apps available for Android and iPhone, and now in use on GMail.
 
 The otp_secret_key is saved automatically when an object is created,
 
