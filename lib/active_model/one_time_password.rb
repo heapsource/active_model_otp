@@ -78,7 +78,7 @@ module ActiveModel
         end
       end
 
-      def provisioning_uri(account = nil, options = {})
+      def provisioning_uri(account = "", options = {})
         account ||= self.email if self.respond_to?(:email)
 
         if otp_counter_based
