@@ -12,9 +12,7 @@ module ActiveModel
         self.otp_digits = options[:length] || 6
 
         self.otp_counter_based = (options[:counter_based] || false)
-        self.otp_counter_column_name = (
-          options[:counter_column_name] || "otp_counter"
-          ).to_s
+        self.otp_counter_column_name = (options[:counter_column_name] || "otp_counter").to_s
 
         include InstanceMethodsOnActivation
 
