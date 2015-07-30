@@ -90,19 +90,19 @@ module ActiveModel
       end
 
       def otp_column
-        self.send(self.class.otp_column_name)
+        self.public_send(self.class.otp_column_name)
       end
 
       def otp_column=(attr)
-        self.send("#{self.class.otp_column_name}=", attr)
+        self.public_send("#{self.class.otp_column_name}=", attr)
       end
 
       def otp_counter
-        self.send(self.class.otp_counter_column_name)
+        self.public_send(self.class.otp_counter_column_name)
       end
 
       def otp_counter=(attr)
-        self.send("#{self.class.otp_counter_column_name}=", attr)
+        self.public_send("#{self.class.otp_counter_column_name}=", attr)
       end
     end
   end
