@@ -9,15 +9,29 @@ class OtpTest < MiniTest::Unit::TestCase
     @visitor = Visitor.new
     @visitor.email = 'roberto@heapsource.com'
     @visitor.run_callbacks :create
+
+    @member = Member.new
+    @member.email = nil
+    @member.run_callbacks :create
   end
 
   def test_authenticate_with_otp
     code = @user.otp_code
-
     assert @user.authenticate_otp(code)
 
     code = @visitor.otp_code
     assert @visitor.authenticate_otp(code)
+  end
+
+  def test_counter_based_otp
+    code = @member.otp_code
+    assert @member.authenticate_otp(code)
+    assert @member.authenticate_otp(code, auto_increment: true)
+    assert !@member.authenticate_otp(code)
+    @member.otp_counter -= 1
+    assert @member.authenticate_otp(code)
+    assert code == @member.otp_code
+    assert code != @member.otp_code(auto_increment: true)
   end
 
   def test_authenticate_with_otp_when_drift_is_allowed
@@ -54,18 +68,20 @@ class OtpTest < MiniTest::Unit::TestCase
   def test_provisioning_uri_with_provided_account
     assert_match %r{otpauth://totp/roberto\?secret=\w{16}}, @user.provisioning_uri("roberto")
     assert_match %r{otpauth://totp/roberto\?secret=\w{16}}, @visitor.provisioning_uri("roberto")
+    assert_match %r{otpauth://hotp/roberto\?secret=\w{16}}, @member.provisioning_uri("roberto")
   end
 
   def test_provisioning_uri_with_email_field
     assert_match %r{otpauth://totp/roberto@heapsource\.com\?secret=\w{16}}, @user.provisioning_uri
     assert_match %r{otpauth://totp/roberto@heapsource\.com\?secret=\w{16}}, @visitor.provisioning_uri
+    assert_match %r{otpauth://hotp/\?secret=\w{16}&counter=0}, @member.provisioning_uri
   end
 
   def test_provisioning_uri_with_options
-    assert_match  %r{otpauth://totp/roberto@heapsource\.com\?issuer=Example&secret=\w{16}},@user.provisioning_uri(nil,issuer: "Example")
-    assert_match %r{otpauth://totp/roberto@heapsource\.com\?issuer=Example&secret=\w{16}}, @visitor.provisioning_uri(nil,issuer: "Example")
-    assert_match %r{otpauth://totp/roberto\?issuer=Example&secret=\w{16}}, @user.provisioning_uri("roberto", issuer: "Example")
-    assert_match %r{otpauth://totp/roberto\?issuer=Example&secret=\w{16}}, @visitor.provisioning_uri("roberto", issuer: "Example")
+    assert_match %r{otpauth://totp/roberto@heapsource\.com\?secret=\w{16}&issuer=Example}, @user.provisioning_uri(nil, issuer: "Example")
+    assert_match %r{otpauth://totp/roberto@heapsource\.com\?secret=\w{16}&issuer=Example}, @visitor.provisioning_uri(nil, issuer: "Example")
+    assert_match %r{otpauth://totp/roberto\?secret=\w{16}&issuer=Example}, @user.provisioning_uri("roberto", issuer: "Example")
+    assert_match %r{otpauth://totp/roberto\?secret=\w{16}&issuer=Example}, @visitor.provisioning_uri("roberto", issuer: "Example")
   end
 
   def test_regenerate_otp
