@@ -168,6 +168,7 @@ Now run the following and compare the output
 
 ```ruby
 require "active_model_otp"
+
 class User
   extend ActiveModel::Callbacks
   include ActiveModel::Validations
@@ -178,6 +179,7 @@ class User
 
   has_one_time_password
 end
+
 user = User.new
 user.email = 'roberto@heapsource.com'
 user.otp_secret_key = "2z6hxkdwi3uvrnpn"
