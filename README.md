@@ -154,6 +154,10 @@ user.provisioning_uri # => 'otpauth://totp/hello@heapsource.com?secret=2z6hxkdwi
 
 # Use a custom field to generate the provisioning_url
 user.provisioning_uri("hello") # => 'otpauth://totp/hello?secret=2z6hxkdwi3uvrnpn'
+
+# You can customize the generated url, by passing a hash of Options
+# `:issuer` lets you set the Issuer name in Google Authenticator, so it doesn't show as a blank entry.
+user.provising_uri(nil, issuer: 'MYAPP') #=> 'otpauth://totp/hello@heapsource.com?secret=2z6hxkdwi3uvrnpn&issuer=MYAPP'
 ```
 
 This can then be rendered as a QR Code which can be scanned and added to the users list of OTP credentials.
