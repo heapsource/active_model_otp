@@ -89,4 +89,9 @@ class OtpTest < MiniTest::Unit::TestCase
     @user.otp_regenerate_secret
     assert secret != @user.otp_column
   end
+
+  def test_hide_secret_key_in_serialize
+    refute_match(/otp_secret_key/, @user.to_json)
+    refute_match(/otp_secret_key/, @user.to_xml)
+  end
 end

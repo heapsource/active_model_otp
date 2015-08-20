@@ -102,6 +102,13 @@ module ActiveModel
       def otp_counter=(attr)
         self.public_send("#{self.class.otp_counter_column_name}=", attr)
       end
+
+      def serializable_hash(options = nil)
+        options ||= {}
+        options[:except] = Array(options[:except])
+        options[:except] << self.class.otp_column_name
+        super(options)
+      end
     end
   end
 end
