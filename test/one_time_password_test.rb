@@ -13,6 +13,10 @@ class OtpTest < MiniTest::Unit::TestCase
     @member = Member.new
     @member.email = nil
     @member.run_callbacks :create
+
+    @ar_user = ActiverecordUser.new
+    @ar_user.email = 'roberto@heapsource.com'
+    @ar_user.run_callbacks :create
   end
 
   def test_authenticate_with_otp
@@ -32,6 +36,17 @@ class OtpTest < MiniTest::Unit::TestCase
     assert @member.authenticate_otp(code)
     assert code == @member.otp_code
     assert code != @member.otp_code(auto_increment: true)
+  end
+
+  def test_counter_based_otp_active_record
+    code = @ar_user.otp_code
+    assert @ar_user.authenticate_otp(code)
+    assert @ar_user.authenticate_otp(code, auto_increment: true)
+    assert !@ar_user.authenticate_otp(code)
+    @ar_user.otp_counter -= 1
+    assert @ar_user.authenticate_otp(code)
+    assert code == @ar_user.otp_code
+    assert code != @ar_user.otp_code(auto_increment: true)
   end
 
   def test_authenticate_with_otp_when_drift_is_allowed
