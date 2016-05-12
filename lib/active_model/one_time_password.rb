@@ -96,11 +96,19 @@ module ActiveModel
       end
 
       def otp_counter
-        self.public_send(self.class.otp_counter_column_name)
+        if self.class.otp_counter_column_name != "otp_counter"
+          self.public_send(self.class.otp_counter_column_name)
+        else
+          super
+        end
       end
 
       def otp_counter=(attr)
-        self.public_send("#{self.class.otp_counter_column_name}=", attr)
+        if self.class.otp_counter_column_name != "otp_counter"
+          self.public_send("#{self.class.otp_counter_column_name}=", attr)
+        else
+          super
+        end
       end
     end
   end

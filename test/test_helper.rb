@@ -8,5 +8,9 @@ require "rubygems"
 require "active_model_otp"
 require "minitest/autorun"
 require "minitest/unit"
+require "active_record"
+
+ActiveRecord::Base.establish_connection adapter: "sqlite3", database: ":memory:"
+load "#{ File.dirname(__FILE__) }/schema.rb"
 
 Dir["models/*.rb"].each {|file| require file }
