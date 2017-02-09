@@ -110,6 +110,13 @@ module ActiveModel
           super
         end
       end
+
+      def serializable_hash(options = nil)
+        options ||= {}
+        options[:except] = Array(options[:except])
+        options[:except] << self.class.otp_column_name
+        super(options)
+      end
     end
   end
 end
