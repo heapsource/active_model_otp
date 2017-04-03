@@ -193,7 +193,7 @@ puts "Current code #{user.otp_code}"
 **Note:** otp_secret_key must be generated using RFC 3548 base32 key strings (for compatilibity with google authenticator)
 
 ### Useful Examples
-
+- [Drifting Ruby Tutorial](https://www.driftingruby.com/episodes/two-factor-authentication)
 - [Generate QR code with rqrcode gem](https://github.com/heapsource/active_model_otp/wiki/Generate-QR-code-with-rqrcode-gem)
 - Generating QR Code with Google Charts API
 - [Sending code via SMS with Twilio](https://github.com/heapsource/active_model_otp/wiki/Send-code-via-Twilio-SMS)
