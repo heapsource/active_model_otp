@@ -18,7 +18,7 @@ module ActiveModel
 
         before_create do
           self.otp_regenerate_secret if !otp_column
-          self.otp_regenerate_counter if otp_counter_based && !otp_counter
+          self.otp_regenerate_counter if otp_counter_based && !otp_counter_column
         end
 
         if respond_to?(:attributes_protected_by_default)
@@ -35,15 +35,15 @@ module ActiveModel
       end
 
       def otp_regenerate_counter
-        self.otp_counter = 1
+        self.otp_counter_column = 1
       end
 
       def authenticate_otp(code, options = {})
         if otp_counter_based
           hotp = ROTP::HOTP.new(otp_column, digits: otp_digits)
-          result = hotp.verify(code, otp_counter)
+          result = hotp.verify(code, otp_counter_column)
           if result && options[:auto_increment]
-            self.otp_counter += 1
+            self.otp_counter_column += 1
             save if respond_to?(:new_record) && !new_record?
           end
           result
@@ -60,10 +60,10 @@ module ActiveModel
       def otp_code(options = {})
         if otp_counter_based
           if options[:auto_increment]
-            self.otp_counter += 1
+            self.otp_counter_column += 1
             save if respond_to?(:new_record) && !new_record?
           end
-          ROTP::HOTP.new(otp_column, digits: otp_digits).at(self.otp_counter)
+          ROTP::HOTP.new(otp_column, digits: otp_digits).at(self.otp_counter_column)
         else
           if options.is_a? Hash
             time = options.fetch(:time, Time.now)
@@ -95,7 +95,7 @@ module ActiveModel
         self.public_send("#{self.class.otp_column_name}=", attr)
       end
 
-      def otp_counter
+      def otp_counter_column
         if self.class.otp_counter_column_name != "otp_counter"
           self.public_send(self.class.otp_counter_column_name)
         else
@@ -103,7 +103,7 @@ module ActiveModel
         end
       end
 
-      def otp_counter=(attr)
+      def otp_counter_column=(attr)
         if self.class.otp_counter_column_name != "otp_counter"
           self.public_send("#{self.class.otp_counter_column_name}=", attr)
         else
