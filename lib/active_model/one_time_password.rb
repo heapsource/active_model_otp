@@ -50,7 +50,7 @@ module ActiveModel
         else
           totp = ROTP::TOTP.new(otp_column, digits: otp_digits)
           if drift = options[:drift]
-            totp.verify_with_drift(code, drift)
+            totp.verify(code, drift_behind: drift)
           else
             totp.verify(code)
           end
