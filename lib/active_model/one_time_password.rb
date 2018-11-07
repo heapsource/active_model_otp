@@ -67,12 +67,10 @@ module ActiveModel
         else
           if options.is_a? Hash
             time = options.fetch(:time, Time.now)
-            padding = options.fetch(:padding, true)
           else
             time = options
-            padding = true
           end
-          ROTP::TOTP.new(otp_column, digits: otp_digits).at(time, padding)
+          ROTP::TOTP.new(otp_column, digits: otp_digits).at(time)
         end
       end
 
