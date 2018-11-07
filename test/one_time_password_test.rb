@@ -63,40 +63,32 @@ class OtpTest < MiniTest::Unit::TestCase
   end
 
   def test_otp_code_with_specific_length
-    assert_match(/^\d{4}$/, @visitor.otp_code(time: 2160, padding: true).to_s)
-    assert_operator(@visitor.otp_code(time: 2160, padding: false).to_s.length, :<= , 4)
+    assert_match(/^\d{4}$/, @visitor.otp_code(2160).to_s)
+    assert_operator(@visitor.otp_code(2160).to_s.length, :<=, 4)
   end
 
   def test_otp_code_without_specific_length
-   assert_match(/^\d{6}$/, @user.otp_code(time: 2160, padding: true).to_s)
-   assert_operator(@user.otp_code(time: 2160, padding: false).to_s.length, :<= , 6)
-  end
-
-  def test_otp_code_padding
-    @user.otp_column = 'kw5jhligwqaiw7jc'
-    assert_match(/^\d{6}$/, @user.otp_code(time: 2160, padding: true).to_s)
-    # Modified this spec as it is not guranteed that without padding we will always
-    # get a 3 digit number
-    assert_operator(@user.otp_code(time: 2160, padding: false).to_s.length, :<= , 6)
+    assert_match(/^\d{6}$/, @user.otp_code(2160).to_s)
+    assert_operator(@user.otp_code(2160).to_s.length, :<=, 6)
   end
 
   def test_provisioning_uri_with_provided_account
-    assert_match %r{otpauth://totp/roberto\?secret=\w{16}}, @user.provisioning_uri("roberto")
-    assert_match %r{otpauth://totp/roberto\?secret=\w{16}}, @visitor.provisioning_uri("roberto")
-    assert_match %r{otpauth://hotp/roberto\?secret=\w{16}}, @member.provisioning_uri("roberto")
+    assert_match %r{^otpauth://totp/roberto\?secret=\w{32}$}, @user.provisioning_uri("roberto")
+    assert_match %r{^otpauth://totp/roberto\?secret=\w{32}$}, @visitor.provisioning_uri("roberto")
+    assert_match %r{^otpauth://hotp/roberto\?secret=\w{32}&counter=0$}, @member.provisioning_uri("roberto")
   end
 
   def test_provisioning_uri_with_email_field
-    assert_match %r{otpauth://totp/roberto@heapsource\.com\?secret=\w{16}}, @user.provisioning_uri
-    assert_match %r{otpauth://totp/roberto@heapsource\.com\?secret=\w{16}}, @visitor.provisioning_uri
-    assert_match %r{otpauth://hotp/\?secret=\w{16}&counter=0}, @member.provisioning_uri
+    assert_match %r{^otpauth://totp/roberto@heapsource\.com\?secret=\w{32}$}, @user.provisioning_uri
+    assert_match %r{^otpauth://totp/roberto@heapsource\.com\?secret=\w{32}$}, @visitor.provisioning_uri
+    assert_match %r{^otpauth://hotp/\?secret=\w{32}&counter=0$}, @member.provisioning_uri
   end
 
   def test_provisioning_uri_with_options
-    assert_match %r{otpauth://totp/roberto@heapsource\.com\?secret=\w{16}&issuer=Example}, @user.provisioning_uri(nil, issuer: "Example")
-    assert_match %r{otpauth://totp/roberto@heapsource\.com\?secret=\w{16}&issuer=Example}, @visitor.provisioning_uri(nil, issuer: "Example")
-    assert_match %r{otpauth://totp/roberto\?secret=\w{16}&issuer=Example}, @user.provisioning_uri("roberto", issuer: "Example")
-    assert_match %r{otpauth://totp/roberto\?secret=\w{16}&issuer=Example}, @visitor.provisioning_uri("roberto", issuer: "Example")
+    assert_match %r{^otpauth://totp/Example\:roberto@heapsource\.com\?secret=\w{32}&issuer=Example$}, @user.provisioning_uri(nil, issuer: "Example")
+    assert_match %r{^otpauth://totp/Example\:roberto@heapsource\.com\?secret=\w{32}&issuer=Example$}, @visitor.provisioning_uri(nil, issuer: "Example")
+    assert_match %r{^otpauth://totp/Example\:roberto\?secret=\w{32}&issuer=Example$}, @user.provisioning_uri("roberto", issuer: "Example")
+    assert_match %r{^otpauth://totp/Example\:roberto\?secret=\w{32}&issuer=Example$}, @visitor.provisioning_uri("roberto", issuer: "Example")
   end
 
   def test_regenerate_otp

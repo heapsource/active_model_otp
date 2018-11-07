@@ -76,9 +76,6 @@ user.otp_code # => '850738'
 
 # Override current time
 user.otp_code(time: Time.now + 3600) # => '317438'
-
-# Don't zero-pad to six digits
-user.otp_code(padding: false) # => '438'
 ```
 
 ### Authenticating using a code
