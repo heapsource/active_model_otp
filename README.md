@@ -43,7 +43,7 @@ end
 
 Note: If you're adding this to an existing user model you'll need to generate *otp_secret_key* with a migration like:
 ```ruby
-User.all.each { |user| user.update_attribute(:otp_secret_key, ROTP::Base32.random_base32) }
+User.find_each { |user| user.update_attribute(:otp_secret_key, ROTP::Base32.random_base32) }
 ```
 
 To use a custom column to store the secret key field you can use the column_name option. It is also possible to generate codes with a specified length.
