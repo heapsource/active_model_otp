@@ -105,6 +105,11 @@ rails g migration AddCounterForOtpToUsers otp_counter:integer
       create    db/migrate/20130707010931_add_counter_for_otp_to_users.rb
 ```
 
+Set default value for otp_counter to 0.
+```ruby
+change_column :users, :otp_counter, :integer, default: 0
+```
+
 In addition set the counter flag option to true
 
 ```ruby
