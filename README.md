@@ -7,6 +7,10 @@
 
 **ActiveModel::Otp** makes adding **Two Factor Authentication** (TFA) to a model simple. Let's see what's required to get AMo::Otp working in our Application, using Rails 4.0 (AMo::Otp is also compatible with Rails 3.x versions). We're going to use a User model and some authentication to do it. Inspired by AM::SecurePassword
 
+## Dependencies
+
+* [ROTP](https://github.com/mdp/rotp) 4.0 or higher
+
 ## Installation
 
 Add this line to your application's Gemfile:

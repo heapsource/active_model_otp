@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "activemodel"
-  spec.add_dependency "rotp"
+  spec.add_dependency "rotp", "~> 4.0.0"
 
   spec.add_development_dependency "activerecord"
   spec.add_development_dependency "activemodel-serializers-xml"
