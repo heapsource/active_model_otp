@@ -30,8 +30,14 @@ module ActiveModel
     end
 
     module InstanceMethodsOnActivation
+      # Defaults to 160 bit long secret
+      # (meaning a 32 character long base32 secret)
+      def otp_random_secret(length = 20)
+        ROTP::Base32.random(length)
+      end
+
       def otp_regenerate_secret
-        self.otp_column = ROTP::Base32.random_base32
+        self.otp_column = otp_random_secret
       end
 
       def otp_regenerate_counter
