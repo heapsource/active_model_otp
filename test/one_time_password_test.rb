@@ -101,4 +101,8 @@ class OtpTest < MiniTest::Unit::TestCase
     refute_match(/otp_secret_key/, @user.to_json)
     refute_match(/otp_secret_key/, @user.to_xml)
   end
+
+  def test_otp_random_secret
+    assert_match /^.{32}$/, @user.class.otp_random_secret
+  end
 end
