@@ -9,7 +9,7 @@
 
 ## Dependencies
 
-* [ROTP](https://github.com/mdp/rotp) 4.0 or higher
+* [ROTP](https://github.com/mdp/rotp) 5.0 or higher
 
 ## Installation
 
@@ -46,7 +46,7 @@ end
 
 Note: If you're adding this to an existing user model you'll need to generate *otp_secret_key* with a migration like:
 ```ruby
-User.find_each { |user| user.update_attribute(:otp_secret_key, ROTP::Base32.random_base32) }
+User.find_each { |user| user.update_attribute(:otp_secret_key, User.otp_random_secret) }
 ```
 
 To use a custom column to store the secret key field you can use the column_name option. It is also possible to generate codes with a specified length.
