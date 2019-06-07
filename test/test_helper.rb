@@ -9,7 +9,11 @@ require "active_model_otp"
 require "minitest/autorun"
 require "minitest/unit"
 require "active_record"
-require "activemodel-serializers-xml"
+
+begin
+  require "activemodel-serializers-xml"
+rescue LoadError
+end
 
 ActiveRecord::Base.establish_connection adapter: "sqlite3", database: ":memory:"
 load "#{ File.dirname(__FILE__) }/schema.rb"

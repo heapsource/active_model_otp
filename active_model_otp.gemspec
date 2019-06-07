@@ -22,7 +22,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rotp", "~> 5.0.0"
 
   spec.add_development_dependency "activerecord"
-  spec.add_development_dependency "activemodel-serializers-xml"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "minitest", "~> 5.4.2"
   spec.add_development_dependency "appraisal"
@@ -30,6 +29,6 @@ Gem::Specification.new do |spec|
   if RUBY_PLATFORM == "java"
     spec.add_development_dependency "activerecord-jdbcsqlite3-adapter"
   else
-    spec.add_development_dependency "sqlite3"
+    spec.add_development_dependency "sqlite3", "~> 1.3.6"
   end
 end

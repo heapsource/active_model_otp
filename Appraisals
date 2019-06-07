@@ -1,19 +1,24 @@
-appraise "4.2" do
-  gem "activemodel", "~> 4.2.5.1"
+appraise "rails-4.2" do
+  gem "activemodel", "~> 4.2"
 end
 
-appraise "5.0" do
-  gem "activemodel", "~> 5.0.0"
+appraise "rails-5.0" do
+  gem "activemodel", "~> 5.0"
+  gem "activemodel-serializers-xml"
 end
 
-appraise "5.1" do
-  gem "activemodel", "~> 5.1.0"
+appraise "rails-5.1" do
+  gem "activemodel", "~> 5.1"
+  gem "activemodel-serializers-xml"
 end
 
-appraise "5.2" do
-  gem "activemodel", "~> 5.2.0"
+appraise "rails-5.2" do
+  gem "activemodel", "~> 5.2"
+  gem "activemodel-serializers-xml"
 end
 
-appraise "6.0" do
-  gem "activemodel", "~> 6.0.0.beta1"
+appraise "rails-6.0.0.rc1" do
+  gem "activemodel", "6.0.0.rc1"
+  gem "activemodel-serializers-xml"
+  gem "sqlite3", "~> 1.4"
 end
