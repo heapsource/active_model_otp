@@ -3,7 +3,6 @@ module ActiveModel
     extend ActiveSupport::Concern
 
     module ClassMethods
-
       def has_one_time_password(options = {})
         cattr_accessor :otp_column_name, :otp_counter_column_name
         class_attribute :otp_digits, :otp_counter_based
@@ -27,17 +26,17 @@ module ActiveModel
           end
         end
       end
-    end
 
-    module InstanceMethodsOnActivation
       # Defaults to 160 bit long secret
       # (meaning a 32 character long base32 secret)
       def otp_random_secret(length = 20)
         ROTP::Base32.random(length)
       end
+    end
 
+    module InstanceMethodsOnActivation
       def otp_regenerate_secret
-        self.otp_column = otp_random_secret
+        self.otp_column = self.class.otp_random_secret
       end
 
       def otp_regenerate_counter
