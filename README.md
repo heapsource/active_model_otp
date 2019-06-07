@@ -5,7 +5,7 @@
 
 # ActiveModel::Otp
 
-**ActiveModel::Otp** makes adding **Two Factor Authentication** (TFA) to a model simple. Let's see what's required to get AMo::Otp working in our Application, using Rails 4.0 (AMo::Otp is also compatible with Rails 3.x versions). We're going to use a User model and some authentication to do it. Inspired by AM::SecurePassword
+**ActiveModel::Otp** makes adding **Two Factor Authentication** (TFA) to a model simple. Let's see what's required to get AMo::Otp working in our Application, using Rails 5.0 (AMo::Otp is also compatible with Rails 4.x versions). We're going to use a User model and try to add options provided by **ActiveMOdel::Otp**. Inspired by AM::SecurePassword
 
 ## Dependencies
 
@@ -39,7 +39,7 @@ rails g migration AddOtpSecretKeyToUsers otp_secret_key:string
 We’ll then need to run rake db:migrate to update the users table in the database. The next step is to update the model code. We need to use has_one_time_password to make it use TFA.
 
 ```ruby
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   has_one_time_password
 end
 ```
@@ -52,7 +52,7 @@ User.find_each { |user| user.update_attribute(:otp_secret_key, User.otp_random_s
 To use a custom column to store the secret key field you can use the column_name option. It is also possible to generate codes with a specified length.
 
 ```ruby
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   has_one_time_password column_name: :my_otp_secret_column, length: 4
 end
 ```
@@ -116,7 +116,7 @@ change_column :users, :otp_counter, :integer, default: 0
 In addition set the counter flag option to true
 
 ```ruby
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   has_one_time_password counter_based: true
 end
 ```
@@ -124,7 +124,7 @@ end
 And for a custom counter column
 
 ```ruby
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   has_one_time_password counter_based: true, counter_column_name: :my_otp_secret_counter_column
 end
 ```
