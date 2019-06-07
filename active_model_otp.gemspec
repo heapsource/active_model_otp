@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = ActiveModel::Otp::VERSION
   spec.authors       = ["Guillermo Iguaran", "Roberto Miranda", "Heapsource"]
   spec.email         = ["guilleiguaran@gmail.com", "rjmaltamar@gmail.com", "hello@firebase.co"]
-  spec.description   = %q{Adds methods to set and authenticate against one time passwords. Inspired in AM::SecurePassword"}
+  spec.description   = %q{Adds methods to set and authenticate against one time passwords 2FA(Two factor Authentication). Inspired in AM::SecurePassword"}
   spec.summary       = "Adds methods to set and authenticate against one time passwords."
   spec.homepage      = ""
   spec.license       = "MIT"
