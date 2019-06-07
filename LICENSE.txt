@@ -1,4 +1,4 @@
-Copyright (c) 2013-2015 Roberto Miranda, Guillermo Iguaran and contributors.
+Copyright (c) 2013-2019 Roberto Miranda, Guillermo Iguaran and contributors.
 
 MIT License
 
