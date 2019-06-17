@@ -54,7 +54,7 @@ class OtpTest < MiniTest::Unit::TestCase
   end
 
   def test_opt_in_two_factor
-    assert @opt_in.otp_column == nil
+    assert @opt_in.otp_column.nil?
 
     @opt_in.otp_regenerate_secret
     code = @opt_in.otp_code
