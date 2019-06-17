@@ -5,20 +5,21 @@ module ActiveModel
     module ClassMethods
       def has_one_time_password(options = {})
         cattr_accessor :otp_column_name, :otp_counter_column_name
-        class_attribute :otp_digits, :otp_counter_based
+        class_attribute :otp_digits, :otp_counter_based, :skip_secret_generation
 
         self.otp_column_name = (options[:column_name] || "otp_secret_key").to_s
         self.otp_digits = options[:length] || 6
 
         self.otp_counter_based = (options[:counter_based] || false)
         self.otp_counter_column_name = (options[:counter_column_name] || "otp_counter").to_s
+        self.skip_secret_generation = options[:skip_secret_generation] || false
 
         include InstanceMethodsOnActivation
 
         before_create do
           self.otp_regenerate_secret if !otp_column
           self.otp_regenerate_counter if otp_counter_based && !otp_counter
-        end
+        end unless skip_secret_generation
 
         if respond_to?(:attributes_protected_by_default)
           def self.attributes_protected_by_default #:nodoc:
