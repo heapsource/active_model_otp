@@ -8,5 +8,9 @@ class OptInTwoFactor
   define_model_callbacks :create
   attr_accessor :otp_secret_key, :email
 
-  has_one_time_password skip_secret_generation: true
+  has_one_time_password unless: :otp_opt_in?
+
+  def otp_opt_in?
+    true
+  end
 end
