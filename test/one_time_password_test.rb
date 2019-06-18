@@ -17,6 +17,10 @@ class OtpTest < MiniTest::Unit::TestCase
     @ar_user = ActiverecordUser.new
     @ar_user.email = 'roberto@heapsource.com'
     @ar_user.run_callbacks :create
+
+    @opt_in = OptInTwoFactor.new
+    @opt_in.email = 'roberto@heapsource.com'
+    @opt_in.run_callbacks :create
   end
 
   def test_authenticate_with_otp
@@ -47,6 +51,14 @@ class OtpTest < MiniTest::Unit::TestCase
     assert @ar_user.authenticate_otp(code)
     assert code == @ar_user.otp_code
     assert code != @ar_user.otp_code(auto_increment: true)
+  end
+
+  def test_opt_in_two_factor
+    assert @opt_in.otp_column.nil?
+
+    @opt_in.otp_regenerate_secret
+    code = @opt_in.otp_code
+    assert @opt_in.authenticate_otp(code)
   end
 
   def test_authenticate_with_otp_when_drift_is_allowed
