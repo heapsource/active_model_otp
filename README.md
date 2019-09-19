@@ -10,6 +10,7 @@
 ## Dependencies
 
 * [ROTP](https://github.com/mdp/rotp) 5.0 or higher
+* Ruby 2.3 or greater
 
 ## Installation
 
