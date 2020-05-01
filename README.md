@@ -5,7 +5,7 @@
 
 # ActiveModel::Otp
 
-**ActiveModel::Otp** makes adding **Two Factor Authentication** (TFA) to a model simple. Let's see what's required to get AMo::Otp working in our Application, using Rails 5.0 (AMo::Otp is also compatible with Rails 4.x versions). We're going to use a User model and try to add options provided by **ActiveMOdel::Otp**. Inspired by AM::SecurePassword
+**ActiveModel::Otp** makes adding **Two Factor Authentication** (TFA) to a model simple. Let's see what's required to get AMo::Otp working in our Application, using Rails 5.0 (AMo::Otp is also compatible with Rails 4.x versions). We're going to use a User model and try to add options provided by **ActiveModel::Otp**. Inspired by AM::SecurePassword
 
 ## Dependencies
 
