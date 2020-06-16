@@ -17,9 +17,9 @@ appraise "rails-5.2" do
   gem "activemodel-serializers-xml"
 end
 
-appraise "rails-6.0.0.rc1" do
-  gem "activerecord", "6.0.0.rc1"
-  gem "activemodel", "6.0.0.rc1"
+appraise "rails-6.0" do
+  gem "activerecord", "~> 6.0"
+  gem "activemodel", "~> 6.0"
   gem "activemodel-serializers-xml"
   gem "sqlite3", "~> 1.4"
 end
