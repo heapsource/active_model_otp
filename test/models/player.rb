@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class Player
   extend ActiveModel::Callbacks
   include ActiveModel::Serializers::JSON
