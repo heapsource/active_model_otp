@@ -5,13 +5,14 @@ module ActiveModel
     module ClassMethods
       def has_one_time_password(options = {})
         cattr_accessor :otp_column_name, :otp_counter_column_name
-        class_attribute :otp_digits, :otp_counter_based
+        class_attribute :otp_digits, :otp_counter_based, :otp_interval
 
         self.otp_column_name = (options[:column_name] || "otp_secret_key").to_s
         self.otp_digits = options[:length] || 6
 
         self.otp_counter_based = (options[:counter_based] || false)
         self.otp_counter_column_name = (options[:counter_column_name] || "otp_counter").to_s
+        self.otp_interval = options[:interval]
 
         include InstanceMethodsOnActivation
 
@@ -53,7 +54,7 @@ module ActiveModel
           end
           result
         else
-          totp = ROTP::TOTP.new(otp_column, digits: otp_digits)
+          totp = ROTP::TOTP.new(otp_column, digits: otp_digits, interval: otp_interval)
           if drift = options[:drift]
             totp.verify(code, drift_behind: drift)
           else
@@ -75,7 +76,7 @@ module ActiveModel
           else
             time = options
           end
-          ROTP::TOTP.new(otp_column, digits: otp_digits).at(time)
+          ROTP::TOTP.new(otp_column, digits: otp_digits, interval: otp_interval).at(time)
         end
       end
 

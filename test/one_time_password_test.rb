@@ -21,6 +21,10 @@ class OtpTest < MiniTest::Unit::TestCase
     @opt_in = OptInTwoFactor.new
     @opt_in.email = 'roberto@heapsource.com'
     @opt_in.run_callbacks :create
+
+    @player = Player.new
+    @player.email = '123'
+    @player.run_callbacks :create
   end
 
   def test_authenticate_with_otp
@@ -116,5 +120,12 @@ class OtpTest < MiniTest::Unit::TestCase
 
   def test_otp_random_secret
     assert_match /^.{32}$/, @user.class.otp_random_secret
+  end
+
+  def test_otp_interval
+    otp_code = @player.otp_code
+    2.times { assert_match(otp_code, @player.otp_code) }
+    sleep 2
+    refute_match(otp_code, @player.otp_code)
   end
 end
