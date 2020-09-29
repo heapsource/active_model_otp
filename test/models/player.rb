@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Player
   extend ActiveModel::Callbacks
   include ActiveModel::Serializers::JSON
@@ -10,6 +11,6 @@ class Player
 
   has_one_time_password interval: 2 # 2 seconds
   def attributes
-    { "otp_secret_key" => otp_secret_key, "email" => email }
+    { 'otp_secret_key' => otp_secret_key, 'email' => email }
   end
 end
