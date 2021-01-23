@@ -102,13 +102,13 @@ class OtpTest < MiniTest::Test
   def test_provisioning_uri_with_provided_account
     assert_match %r{^otpauth://totp/roberto\?secret=\w{32}$}, @user.provisioning_uri("roberto")
     assert_match %r{^otpauth://totp/roberto\?secret=\w{32}$}, @visitor.provisioning_uri("roberto")
-    assert_match %r{^otpauth://hotp/roberto\?secret=\w{32}&counter=0$}, @member.provisioning_uri("roberto")
+    assert_match %r{^otpauth://hotp/roberto\?secret=\w{32}&counter=1$}, @member.provisioning_uri("roberto")
   end
 
   def test_provisioning_uri_with_email_field
     assert_match %r{^otpauth://totp/roberto%40heapsource\.com\?secret=\w{32}$}, @user.provisioning_uri
     assert_match %r{^otpauth://totp/roberto%40heapsource\.com\?secret=\w{32}$}, @visitor.provisioning_uri
-    assert_match %r{^otpauth://hotp/\?secret=\w{32}&counter=0$}, @member.provisioning_uri
+    assert_match %r{^otpauth://hotp/\?secret=\w{32}&counter=1$}, @member.provisioning_uri
   end
 
   def test_provisioning_uri_with_options
@@ -116,6 +116,12 @@ class OtpTest < MiniTest::Test
     assert_match %r{^otpauth://totp/Example\:roberto%40heapsource\.com\?secret=\w{32}&issuer=Example$}, @visitor.provisioning_uri(nil, issuer: "Example")
     assert_match %r{^otpauth://totp/Example\:roberto\?secret=\w{32}&issuer=Example$}, @user.provisioning_uri("roberto", issuer: "Example")
     assert_match %r{^otpauth://totp/Example\:roberto\?secret=\w{32}&issuer=Example$}, @visitor.provisioning_uri("roberto", issuer: "Example")
+  end
+
+  def test_provisioning_uri_with_incremented_counter
+    2.times { @member.otp_code(auto_increment: true) }
+
+    assert_match %r{^otpauth://hotp/\?secret=\w{32}&counter=3$}, @member.provisioning_uri
   end
 
   def test_regenerate_otp
