@@ -1,6 +1,6 @@
 require "test_helper"
 
-class OtpTest < MiniTest::Unit::TestCase
+class OtpTest < MiniTest::Test
   def setup
     @user = User.new
     @user.email = 'roberto@heapsource.com'
@@ -91,14 +91,14 @@ class OtpTest < MiniTest::Unit::TestCase
   end
 
   def test_provisioning_uri_with_email_field
-    assert_match %r{^otpauth://totp/roberto@heapsource\.com\?secret=\w{32}$}, @user.provisioning_uri
-    assert_match %r{^otpauth://totp/roberto@heapsource\.com\?secret=\w{32}$}, @visitor.provisioning_uri
+    assert_match %r{^otpauth://totp/roberto%40heapsource\.com\?secret=\w{32}$}, @user.provisioning_uri
+    assert_match %r{^otpauth://totp/roberto%40heapsource\.com\?secret=\w{32}$}, @visitor.provisioning_uri
     assert_match %r{^otpauth://hotp/\?secret=\w{32}&counter=0$}, @member.provisioning_uri
   end
 
   def test_provisioning_uri_with_options
-    assert_match %r{^otpauth://totp/Example\:roberto@heapsource\.com\?secret=\w{32}&issuer=Example$}, @user.provisioning_uri(nil, issuer: "Example")
-    assert_match %r{^otpauth://totp/Example\:roberto@heapsource\.com\?secret=\w{32}&issuer=Example$}, @visitor.provisioning_uri(nil, issuer: "Example")
+    assert_match %r{^otpauth://totp/Example\:roberto%40heapsource\.com\?secret=\w{32}&issuer=Example$}, @user.provisioning_uri(nil, issuer: "Example")
+    assert_match %r{^otpauth://totp/Example\:roberto%40heapsource\.com\?secret=\w{32}&issuer=Example$}, @visitor.provisioning_uri(nil, issuer: "Example")
     assert_match %r{^otpauth://totp/Example\:roberto\?secret=\w{32}&issuer=Example$}, @user.provisioning_uri("roberto", issuer: "Example")
     assert_match %r{^otpauth://totp/Example\:roberto\?secret=\w{32}&issuer=Example$}, @visitor.provisioning_uri("roberto", issuer: "Example")
   end
@@ -111,10 +111,9 @@ class OtpTest < MiniTest::Unit::TestCase
 
   def test_hide_secret_key_in_serialize
     refute_match(/otp_secret_key/, @user.to_json)
-    refute_match(/otp_secret_key/, @user.to_xml)
   end
 
   def test_otp_random_secret
-    assert_match /^.{32}$/, @user.class.otp_random_secret
+    assert_match(/^.{32}$/, @user.class.otp_random_secret)
   end
 end
