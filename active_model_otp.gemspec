@@ -28,16 +28,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "minitest", "~> 5.4.2"
   spec.add_development_dependency "appraisal"
 
-  Gem::Specification
-    .select { |dependency| dependency.name == "activemodel" }
-    .max_by(&:version).tap do |dependency|
-      major, = dependency.version.segments
-
-      if major >= 5
-        spec.add_development_dependency "activemodel-serializers-xml"
-      end
-    end
-
   if RUBY_PLATFORM == "java"
     spec.add_development_dependency "activerecord-jdbcsqlite3-adapter"
   else
