@@ -1,7 +1,6 @@
 class User
   extend ActiveModel::Callbacks
   include ActiveModel::Serializers::JSON
-  include ActiveModel::Serializers::Xml
   include ActiveModel::Validations
   include ActiveModel::OneTimePassword
 

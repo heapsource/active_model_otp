@@ -15,7 +15,7 @@ module ActiveModel
 
         include InstanceMethodsOnActivation
 
-        before_create(options.slice(:if, :unless)) do
+        before_create(**options.slice(:if, :unless)) do
           self.otp_regenerate_secret if !otp_column
           self.otp_regenerate_counter if otp_counter_based && !otp_counter
         end
