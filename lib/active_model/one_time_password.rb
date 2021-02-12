@@ -4,8 +4,10 @@ module ActiveModel
 
     module ClassMethods
       def has_one_time_password(options = {})
-        cattr_accessor :otp_column_name, :otp_counter_column_name
-        class_attribute :otp_digits, :otp_counter_based
+        cattr_accessor :otp_column_name, :otp_counter_column_name,
+                       :otp_backup_codes_column_name
+        class_attribute :otp_digits, :otp_counter_based,
+                        :otp_backup_codes_count, :otp_one_time_backup_codes
 
         self.otp_column_name = (options[:column_name] || "otp_secret_key").to_s
         self.otp_digits = options[:length] || 6
@@ -13,11 +15,20 @@ module ActiveModel
         self.otp_counter_based = (options[:counter_based] || false)
         self.otp_counter_column_name = (options[:counter_column_name] || "otp_counter").to_s
 
+        self.otp_backup_codes_column_name = (
+          options[:backup_codes_column_name] || 'otp_backup_codes'
+        ).to_s
+        self.otp_backup_codes_count = options[:backup_codes_count] || 12
+        self.otp_one_time_backup_codes = (
+          options[:one_time_backup_codes] || false
+        )
+
         include InstanceMethodsOnActivation
 
         before_create(**options.slice(:if, :unless)) do
           self.otp_regenerate_secret if !otp_column
           self.otp_regenerate_counter if otp_counter_based && !otp_counter
+          otp_regenerate_backup_codes if backup_codes_enabled?
         end
 
         if respond_to?(:attributes_protected_by_default)
@@ -44,6 +55,8 @@ module ActiveModel
       end
 
       def authenticate_otp(code, options = {})
+        return true if backup_codes_enabled? && authenticate_backup_code(code)
+
         if otp_counter_based
           hotp = ROTP::HOTP.new(otp_column, digits: otp_digits)
           result = hotp.verify(code, otp_counter)
@@ -119,6 +132,35 @@ module ActiveModel
         options[:except] = Array(options[:except])
         options[:except] << self.class.otp_column_name
         super(options)
+      end
+
+      def otp_regenerate_backup_codes
+        otp = ROTP::OTP.new(otp_column)
+        backup_codes = Array.new(self.class.otp_backup_codes_count) do
+          otp.generate_otp((SecureRandom.random_number(9e5) + 1e5).to_i)
+        end
+
+        public_send("#{self.class.otp_backup_codes_column_name}=", backup_codes)
+      end
+
+      def backup_codes_enabled?
+        self.class.attribute_method?(self.class.otp_backup_codes_column_name)
+      end
+
+      private
+
+      def authenticate_backup_code(code)
+        backup_codes_column_name = self.class.otp_backup_codes_column_name
+        backup_codes = public_send(backup_codes_column_name)
+        return false unless backup_codes.include?(code)
+
+        if self.class.otp_one_time_backup_codes
+          backup_codes.delete(code)
+          public_send("#{backup_codes_column_name}=", backup_codes)
+          save if respond_to?(:changed?) && !new_record?
+        end
+
+        true
       end
     end
   end

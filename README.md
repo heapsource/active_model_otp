@@ -150,6 +150,51 @@ user.otp_code(auto_increment: true) # => '002811'
 user.otp_code # => '002811'
 ```
 
+## Backup codes
+
+We're going to add a field to our ``User`` Model, so each user can have an otp backup codes. The next step is to run the migration generator in order to add the backup codes field.
+
+```ruby
+rails g migration AddOtpBackupCodesToUsers otp_backup_codes:text
+=>
+      invoke  active_record
+      create    db/migrate/20210126030834_add_otp_backup_codes_to_users.rb
+```
+
+You can change backup codes column name by option `backup_codes_column_name`:
+
+```ruby
+class User < ApplicationRecord
+  has_one_time_password backup_codes_column_name: 'secret_codes'
+end
+```
+
+Then use array type in schema or serialize attribute in model as Array (depending on used db type). Or even consider to use some libs like (lockbox)[https://github.com/ankane/lockbox] with type array.
+
+After that user can use one of automatically generated backup codes for authentication using same method `authenticate_otp`.
+
+By default it generates 12 backup codes. You can change it by option `backup_codes_count`:
+
+```ruby
+class User < ApplicationRecord
+  has_one_time_password backup_codes_count: 6
+end
+```
+
+By default each backup code can be reused an infinite number of times. You can
+change it with option `one_time_backup_codes`:
+
+```ruby
+class User < ApplicationRecord
+  has_one_time_password one_time_backup_codes: true
+end
+```
+
+```ruby
+user.authenticate_otp('186522') # => true
+user.authenticate_otp('186522') # => false
+```
+
 ## Google Authenticator Compatible
 
 The library works with the Google Authenticator iPhone and Android app, and also includes the ability to generate provisioning URI's to use with the QR Code scanner built into the app.
