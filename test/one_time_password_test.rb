@@ -69,6 +69,21 @@ class OtpTest < MiniTest::Test
     assert @visitor.authenticate_otp(code, drift: 60)
   end
 
+  def test_authenticate_with_backup_code
+    backup_code = @user.public_send(@user.otp_backup_codes_column_name).first
+    assert @user.authenticate_otp(backup_code)
+
+    backup_code = @user.public_send(@user.otp_backup_codes_column_name).last
+    @user.otp_regenerate_backup_codes
+    assert !@user.authenticate_otp(backup_code)
+  end
+
+  def test_authenticate_with_one_time_backup_code
+    backup_code = @user.public_send(@user.otp_backup_codes_column_name).first
+    assert @user.authenticate_otp(backup_code)
+    assert !@user.authenticate_otp(backup_code)
+  end
+
   def test_otp_code
     assert_match(/^\d{6}$/, @user.otp_code.to_s)
     assert_match(/^\d{4}$/, @visitor.otp_code.to_s)
