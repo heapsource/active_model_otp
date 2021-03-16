@@ -58,30 +58,30 @@ class OtpTest < MiniTest::Test
 
     @opt_in.otp_regenerate_secret
     code = @opt_in.otp_code
-    assert @opt_in.authenticate_otp(code)
+    assert_equal true, @opt_in.authenticate_otp(code)
   end
 
   def test_authenticate_with_otp_when_drift_is_allowed
     code = @user.otp_code(Time.now - 30)
-    assert @user.authenticate_otp(code, drift: 60)
+    assert_equal true, @user.authenticate_otp(code, drift: 60)
 
     code = @visitor.otp_code(Time.now - 30)
-    assert @visitor.authenticate_otp(code, drift: 60)
+    assert_equal true, @visitor.authenticate_otp(code, drift: 60)
   end
 
   def test_authenticate_with_backup_code
     backup_code = @user.public_send(@user.otp_backup_codes_column_name).first
-    assert @user.authenticate_otp(backup_code)
+    assert_equal true, @user.authenticate_otp(backup_code)
 
     backup_code = @user.public_send(@user.otp_backup_codes_column_name).last
     @user.otp_regenerate_backup_codes
-    assert !@user.authenticate_otp(backup_code)
+    assert_equal true, !@user.authenticate_otp(backup_code)
   end
 
   def test_authenticate_with_one_time_backup_code
     backup_code = @user.public_send(@user.otp_backup_codes_column_name).first
-    assert @user.authenticate_otp(backup_code)
-    assert !@user.authenticate_otp(backup_code)
+    assert_equal true, @user.authenticate_otp(backup_code)
+    assert_equal true, !@user.authenticate_otp(backup_code)
   end
 
   def test_otp_code
