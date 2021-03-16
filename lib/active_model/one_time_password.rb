@@ -141,7 +141,7 @@ module ActiveModel
 
       def authenticate_totp(code, options = {})
         totp = ROTP::TOTP.new(otp_column, digits: otp_digits)
-        if drift = options[:drift]
+        if (drift = options[:drift])
           totp.verify(code, drift_behind: drift)
         else
           totp.verify(code)
@@ -157,11 +157,11 @@ module ActiveModel
       end
 
       def totp_code(options = {})
-        if options.is_a? Hash
-          time = options.fetch(:time, Time.now)
-        else
-          time = options
-        end
+        time = if options.is_a?(Hash)
+                 options.fetch(:time, Time.now)
+               else
+                 options
+               end
         ROTP::TOTP.new(otp_column, digits: otp_digits).at(time)
       end
 
