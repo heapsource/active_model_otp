@@ -97,9 +97,13 @@ module ActiveModel
         account ||= ""
 
         if otp_counter_based
-          ROTP::HOTP.new(otp_column, options).provisioning_uri(account)
+          ROTP::HOTP
+            .new(otp_column, options)
+            .provisioning_uri(account, self.otp_counter)
         else
-          ROTP::TOTP.new(otp_column, options).provisioning_uri(account)
+          ROTP::TOTP
+            .new(otp_column, options)
+            .provisioning_uri(account)
         end
       end
 

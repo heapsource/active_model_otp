@@ -1,4 +1,6 @@
-require "test_helper"
+# frozen_string_literal: true
+
+require 'test_helper'
 
 class OtpTest < MiniTest::Test
   def setup
@@ -100,22 +102,51 @@ class OtpTest < MiniTest::Test
   end
 
   def test_provisioning_uri_with_provided_account
-    assert_match %r{^otpauth://totp/roberto\?secret=\w{32}$}, @user.provisioning_uri("roberto")
-    assert_match %r{^otpauth://totp/roberto\?secret=\w{32}$}, @visitor.provisioning_uri("roberto")
-    assert_match %r{^otpauth://hotp/roberto\?secret=\w{32}&counter=0$}, @member.provisioning_uri("roberto")
+    totp = %r{^otpauth://totp/roberto\?secret=\w{32}$}
+    hotp = %r{^otpauth://hotp/roberto\?secret=\w{32}&counter=1$}
+
+    assert_match totp, @user.provisioning_uri('roberto')
+    assert_match totp, @visitor.provisioning_uri('roberto')
+    assert_match hotp, @member.provisioning_uri('roberto')
   end
 
   def test_provisioning_uri_with_email_field
-    assert_match %r{^otpauth://totp/roberto%40heapsource\.com\?secret=\w{32}$}, @user.provisioning_uri
-    assert_match %r{^otpauth://totp/roberto%40heapsource\.com\?secret=\w{32}$}, @visitor.provisioning_uri
-    assert_match %r{^otpauth://hotp/\?secret=\w{32}&counter=0$}, @member.provisioning_uri
+    totp = %r{^otpauth://totp/roberto%40heapsource\.com\?secret=\w{32}$}
+    hotp = %r{^otpauth://hotp/\?secret=\w{32}&counter=1$}
+
+    assert_match totp, @user.provisioning_uri
+    assert_match totp, @visitor.provisioning_uri
+    assert_match hotp, @member.provisioning_uri
   end
 
   def test_provisioning_uri_with_options
-    assert_match %r{^otpauth://totp/Example\:roberto%40heapsource\.com\?secret=\w{32}&issuer=Example$}, @user.provisioning_uri(nil, issuer: "Example")
-    assert_match %r{^otpauth://totp/Example\:roberto%40heapsource\.com\?secret=\w{32}&issuer=Example$}, @visitor.provisioning_uri(nil, issuer: "Example")
-    assert_match %r{^otpauth://totp/Example\:roberto\?secret=\w{32}&issuer=Example$}, @user.provisioning_uri("roberto", issuer: "Example")
-    assert_match %r{^otpauth://totp/Example\:roberto\?secret=\w{32}&issuer=Example$}, @visitor.provisioning_uri("roberto", issuer: "Example")
+    account = %r{
+      ^otpauth://totp/Example\:roberto\?secret=\w{32}&issuer=Example$
+    }x
+
+    email = %r{
+      ^otpauth://totp/Example\:roberto%40heapsource\.com\?secret=\w{32}
+      &issuer=Example$
+    }x
+
+    assert_match(
+      account, @user.provisioning_uri('roberto', issuer: 'Example')
+    )
+
+    assert_match(
+      account, @visitor.provisioning_uri('roberto', issuer: 'Example')
+    )
+
+    assert_match email, @user.provisioning_uri(nil, issuer: 'Example')
+    assert_match email, @visitor.provisioning_uri(nil, issuer: 'Example')
+  end
+
+  def test_provisioning_uri_with_incremented_counter
+    2.times { @member.otp_code(auto_increment: true) }
+
+    hotp = %r{^otpauth://hotp/\?secret=\w{32}&counter=3$}
+
+    assert_match hotp, @member.provisioning_uri
   end
 
   def test_regenerate_otp
