@@ -156,7 +156,7 @@ module ActiveModel
       def authenticate_backup_code(code)
         backup_codes_column_name = self.class.otp_backup_codes_column_name
         backup_codes = public_send(backup_codes_column_name)
-        return false unless backup_codes.include?(code)
+        return false unless backup_codes.present? && backup_codes.include?(code)
 
         if self.class.otp_one_time_backup_codes
           backup_codes.delete(code)
