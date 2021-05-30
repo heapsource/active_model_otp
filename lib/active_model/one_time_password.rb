@@ -58,37 +58,17 @@ module ActiveModel
         return true if backup_codes_enabled? && authenticate_backup_code(code)
 
         if otp_counter_based
-          hotp = ROTP::HOTP.new(otp_column, digits: otp_digits)
-          result = hotp.verify(code, otp_counter)
-          if result && options[:auto_increment]
-            self.otp_counter += 1
-            save if respond_to?(:changed?) && !new_record?
-          end
-          result
+          otp_counter == authenticate_hotp(code, options)
         else
-          totp = ROTP::TOTP.new(otp_column, digits: otp_digits)
-          if drift = options[:drift]
-            totp.verify(code, drift_behind: drift)
-          else
-            totp.verify(code)
-          end
+          authenticate_totp(code, options).present?
         end
       end
 
       def otp_code(options = {})
         if otp_counter_based
-          if options[:auto_increment]
-            self.otp_counter += 1
-            save if respond_to?(:changed?) && !new_record?
-          end
-          ROTP::HOTP.new(otp_column, digits: otp_digits).at(self.otp_counter)
+          hotp_code(options)
         else
-          if options.is_a? Hash
-            time = options.fetch(:time, Time.now)
-          else
-            time = options
-          end
-          ROTP::TOTP.new(otp_column, digits: otp_digits).at(time)
+          totp_code(options)
         end
       end
 
@@ -152,6 +132,42 @@ module ActiveModel
       end
 
       private
+
+      def authenticate_hotp(code, options = {})
+        hotp = ROTP::HOTP.new(otp_column, digits: otp_digits)
+        result = hotp.verify(code, otp_counter)
+        if result && options[:auto_increment]
+          self.otp_counter += 1
+          save if respond_to?(:changed?) && !new_record?
+        end
+        result
+      end
+
+      def authenticate_totp(code, options = {})
+        totp = ROTP::TOTP.new(otp_column, digits: otp_digits)
+        if (drift = options[:drift])
+          totp.verify(code, drift_behind: drift)
+        else
+          totp.verify(code)
+        end
+      end
+
+      def hotp_code(options = {})
+        if options[:auto_increment]
+          self.otp_counter += 1
+          save if respond_to?(:changed?) && !new_record?
+        end
+        ROTP::HOTP.new(otp_column, digits: otp_digits).at(otp_counter)
+      end
+
+      def totp_code(options = {})
+        time = if options.is_a?(Hash)
+                 options.fetch(:time, Time.now)
+               else
+                 options
+               end
+        ROTP::TOTP.new(otp_column, digits: otp_digits).at(time)
+      end
 
       def authenticate_backup_code(code)
         backup_codes_column_name = self.class.otp_backup_codes_column_name
