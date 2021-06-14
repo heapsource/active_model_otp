@@ -6,7 +6,7 @@ module ActiveModel
       def has_one_time_password(options = {})
         cattr_accessor :otp_column_name, :otp_counter_column_name,
                        :otp_backup_codes_column_name
-        class_attribute :otp_digits, :otp_counter_based, :otp_interval
+        class_attribute :otp_digits, :otp_counter_based, :otp_interval,
                         :otp_backup_codes_count, :otp_one_time_backup_codes
 
         self.otp_column_name = (options[:column_name] || 'otp_secret_key').to_s
