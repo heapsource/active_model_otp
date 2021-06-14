@@ -1,6 +1,8 @@
-require "test_helper"
+# frozen_string_literal: true
 
-class OtpTest < MiniTest::Unit::TestCase
+require 'test_helper'
+
+class OtpTest < MiniTest::Test
   def setup
     @user = User.new
     @user.email = 'roberto@heapsource.com'
@@ -62,15 +64,30 @@ class OtpTest < MiniTest::Unit::TestCase
 
     @opt_in.otp_regenerate_secret
     code = @opt_in.otp_code
-    assert @opt_in.authenticate_otp(code)
+    assert_equal true, @opt_in.authenticate_otp(code)
   end
 
   def test_authenticate_with_otp_when_drift_is_allowed
     code = @user.otp_code(Time.now - 30)
-    assert @user.authenticate_otp(code, drift: 60)
+    assert_equal true, @user.authenticate_otp(code, drift: 60)
 
     code = @visitor.otp_code(Time.now - 30)
-    assert @visitor.authenticate_otp(code, drift: 60)
+    assert_equal true, @visitor.authenticate_otp(code, drift: 60)
+  end
+
+  def test_authenticate_with_backup_code
+    backup_code = @user.public_send(@user.otp_backup_codes_column_name).first
+    assert_equal true, @user.authenticate_otp(backup_code)
+
+    backup_code = @user.public_send(@user.otp_backup_codes_column_name).last
+    @user.otp_regenerate_backup_codes
+    assert_equal true, !@user.authenticate_otp(backup_code)
+  end
+
+  def test_authenticate_with_one_time_backup_code
+    backup_code = @user.public_send(@user.otp_backup_codes_column_name).first
+    assert_equal true, @user.authenticate_otp(backup_code)
+    assert_equal true, !@user.authenticate_otp(backup_code)
   end
 
   def test_otp_code
@@ -89,22 +106,51 @@ class OtpTest < MiniTest::Unit::TestCase
   end
 
   def test_provisioning_uri_with_provided_account
-    assert_match %r{^otpauth://totp/roberto\?secret=\w{32}$}, @user.provisioning_uri("roberto")
-    assert_match %r{^otpauth://totp/roberto\?secret=\w{32}$}, @visitor.provisioning_uri("roberto")
-    assert_match %r{^otpauth://hotp/roberto\?secret=\w{32}&counter=0$}, @member.provisioning_uri("roberto")
+    totp = %r{^otpauth://totp/roberto\?secret=\w{32}$}
+    hotp = %r{^otpauth://hotp/roberto\?secret=\w{32}&counter=1$}
+
+    assert_match totp, @user.provisioning_uri('roberto')
+    assert_match totp, @visitor.provisioning_uri('roberto')
+    assert_match hotp, @member.provisioning_uri('roberto')
   end
 
   def test_provisioning_uri_with_email_field
-    assert_match %r{^otpauth://totp/roberto@heapsource\.com\?secret=\w{32}$}, @user.provisioning_uri
-    assert_match %r{^otpauth://totp/roberto@heapsource\.com\?secret=\w{32}$}, @visitor.provisioning_uri
-    assert_match %r{^otpauth://hotp/\?secret=\w{32}&counter=0$}, @member.provisioning_uri
+    totp = %r{^otpauth://totp/roberto%40heapsource\.com\?secret=\w{32}$}
+    hotp = %r{^otpauth://hotp/\?secret=\w{32}&counter=1$}
+
+    assert_match totp, @user.provisioning_uri
+    assert_match totp, @visitor.provisioning_uri
+    assert_match hotp, @member.provisioning_uri
   end
 
   def test_provisioning_uri_with_options
-    assert_match %r{^otpauth://totp/Example\:roberto@heapsource\.com\?secret=\w{32}&issuer=Example$}, @user.provisioning_uri(nil, issuer: "Example")
-    assert_match %r{^otpauth://totp/Example\:roberto@heapsource\.com\?secret=\w{32}&issuer=Example$}, @visitor.provisioning_uri(nil, issuer: "Example")
-    assert_match %r{^otpauth://totp/Example\:roberto\?secret=\w{32}&issuer=Example$}, @user.provisioning_uri("roberto", issuer: "Example")
-    assert_match %r{^otpauth://totp/Example\:roberto\?secret=\w{32}&issuer=Example$}, @visitor.provisioning_uri("roberto", issuer: "Example")
+    account = %r{
+      ^otpauth://totp/Example\:roberto\?secret=\w{32}&issuer=Example$
+    }x
+
+    email = %r{
+      ^otpauth://totp/Example\:roberto%40heapsource\.com\?secret=\w{32}
+      &issuer=Example$
+    }x
+
+    assert_match(
+      account, @user.provisioning_uri('roberto', issuer: 'Example')
+    )
+
+    assert_match(
+      account, @visitor.provisioning_uri('roberto', issuer: 'Example')
+    )
+
+    assert_match email, @user.provisioning_uri(nil, issuer: 'Example')
+    assert_match email, @visitor.provisioning_uri(nil, issuer: 'Example')
+  end
+
+  def test_provisioning_uri_with_incremented_counter
+    2.times { @member.otp_code(auto_increment: true) }
+
+    hotp = %r{^otpauth://hotp/\?secret=\w{32}&counter=3$}
+
+    assert_match hotp, @member.provisioning_uri
   end
 
   def test_regenerate_otp
@@ -115,11 +161,10 @@ class OtpTest < MiniTest::Unit::TestCase
 
   def test_hide_secret_key_in_serialize
     refute_match(/otp_secret_key/, @user.to_json)
-    refute_match(/otp_secret_key/, @user.to_xml)
   end
 
   def test_otp_random_secret
-    assert_match /^.{32}$/, @user.class.otp_random_secret
+    assert_match(/^.{32}$/, @user.class.otp_random_secret)
   end
 
   def test_otp_interval
