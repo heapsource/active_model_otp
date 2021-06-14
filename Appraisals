@@ -1,4 +1,5 @@
 appraise "rails-4.2" do
+  remove_gem "activemodel-serializers-xml"
   gem "activemodel", "~> 4.2"
   gem "sqlite3", "~> 1.3.6"
 end
