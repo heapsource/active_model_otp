@@ -7,18 +7,18 @@ module ActiveModel
         cattr_accessor :otp_column_name, :otp_counter_column_name
         class_attribute :otp_digits, :otp_counter_based, :otp_interval
 
-        self.otp_column_name = (options[:column_name] || "otp_secret_key").to_s
+        self.otp_column_name = (options[:column_name] || 'otp_secret_key').to_s
         self.otp_digits = options[:length] || 6
 
         self.otp_counter_based = (options[:counter_based] || false)
-        self.otp_counter_column_name = (options[:counter_column_name] || "otp_counter").to_s
+        self.otp_counter_column_name = (options[:counter_column_name] || 'otp_counter').to_s
         self.otp_interval = options[:interval]
 
         include InstanceMethodsOnActivation
 
         before_create(options.slice(:if, :unless)) do
-          self.otp_regenerate_secret if !otp_column
-          self.otp_regenerate_counter if otp_counter_based && !otp_counter
+          otp_regenerate_secret unless otp_column
+          otp_regenerate_counter if otp_counter_based && !otp_counter
         end
 
         if respond_to?(:attributes_protected_by_default)
@@ -54,10 +54,9 @@ module ActiveModel
           end
           result
         else
-          totp = ROTP::TOTP.new(
-            otp_column,
-            digits: otp_digits,
-            interval: otp_interval
+          totp = ROTP::TOTP.new(otp_column,
+                                digits: otp_digits,
+                                interval: otp_interval
           )
           if drift = options[:drift]
             totp.verify(code, drift_behind: drift)
@@ -75,22 +74,21 @@ module ActiveModel
           end
           ROTP::HOTP.new(otp_column, digits: otp_digits).at(self.otp_counter)
         else
-          if options.is_a? Hash
-            time = options.fetch(:time, Time.now)
-          else
-            time = options
-          end
-          ROTP::TOTP.new(
-            otp_column,
-            digits: otp_digits,
-            interval: otp_interval
+          time = if options.is_a? Hash
+                   options.fetch(:time, Time.now)
+                 else
+                   options
+                 end
+          ROTP::TOTP.new(otp_column,
+                         digits: otp_digits,
+                         interval: otp_interval
           ).at(time)
         end
       end
 
       def provisioning_uri(account = nil, options = {})
-        account ||= self.email if self.respond_to?(:email)
-        account ||= ""
+        account ||= email if respond_to?(:email)
+        account ||= ''
 
         if otp_counter_based
           ROTP::HOTP.new(otp_column, options).provisioning_uri(account)
@@ -100,24 +98,24 @@ module ActiveModel
       end
 
       def otp_column
-        self.public_send(self.class.otp_column_name)
+        public_send(self.class.otp_column_name)
       end
 
       def otp_column=(attr)
-        self.public_send("#{self.class.otp_column_name}=", attr)
+        public_send("#{self.class.otp_column_name}=", attr)
       end
 
       def otp_counter
-        if self.class.otp_counter_column_name != "otp_counter"
-          self.public_send(self.class.otp_counter_column_name)
+        if self.class.otp_counter_column_name != 'otp_counter'
+          public_send(self.class.otp_counter_column_name)
         else
           super
         end
       end
 
       def otp_counter=(attr)
-        if self.class.otp_counter_column_name != "otp_counter"
-          self.public_send("#{self.class.otp_counter_column_name}=", attr)
+        if self.class.otp_counter_column_name != 'otp_counter'
+          public_send("#{self.class.otp_counter_column_name}=", attr)
         else
           super
         end
