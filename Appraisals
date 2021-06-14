@@ -1,6 +1,5 @@
 appraise "rails-4.2" do
   gem "activemodel", "~> 4.2"
-  gem "activemodel-serializers-xml", git: "https://github.com/rails/activemodel-serializers-xml", ref: "1f72d95"
   gem "sqlite3", "~> 1.3.6"
 end
 
