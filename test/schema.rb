@@ -8,7 +8,7 @@ ActiveRecord::Schema.define do
     t.string :otp_secret_key
     t.timestamps
   end
-  
+
   create_table :interval_users, force: true do |t|
     t.string :key
     t.string :email
@@ -16,7 +16,7 @@ ActiveRecord::Schema.define do
     t.string :otp_secret_key
     t.timestamps
   end
-  
+
   create_table :default_interval_users, force: true do |t|
     t.string :key
     t.string :email
