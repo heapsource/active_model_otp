@@ -176,7 +176,7 @@ class OtpTest < MiniTest::Test
     2.times { assert_match(otp_code, @interval_user.otp_code) }
     sleep 5
     refute_match(otp_code, @interval_user.otp_code)
-    
+
     otp_code = @default_interval_user.otp_code
     2.times { assert_match(otp_code, @default_interval_user.otp_code) }
     sleep 5
