@@ -27,6 +27,10 @@ class OtpTest < MiniTest::Test
     @interval_user = IntervalUser.new
     @interval_user.email = 'roberto@heapsource.com'
     @interval_user.run_callbacks :create
+
+    @default_interval_user = DefaultIntervalUser.new
+    @default_interval_user.email = 'roberto@heapsource.com'
+    @default_interval_user.run_callbacks :create
   end
 
   def test_authenticate_with_otp
@@ -173,10 +177,9 @@ class OtpTest < MiniTest::Test
     sleep 5
     refute_match(otp_code, @interval_user.otp_code)
     
-    
-    otp_code = @ar_user.otp_code
-    2.times { assert_match(otp_code, @ar_user.otp_code) }
+    otp_code = @default_interval_user.otp_code
+    2.times { assert_match(otp_code, @default_interval_user.otp_code) }
     sleep 5
-    assert_match(otp_code, @ar_user.otp_code)
+    assert_match(otp_code, @default_interval_user.otp_code)
   end
 end
