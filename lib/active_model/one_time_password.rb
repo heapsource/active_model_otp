@@ -147,8 +147,8 @@ module ActiveModel
 
       def authenticate_totp(code, options = {})
         totp = ROTP::TOTP.new(
-          otp_column, 
-          digits: otp_digits, 
+          otp_column,
+          digits: otp_digits,
           interval: otp_interval
         )
         if (drift = options[:drift])
