@@ -23,14 +23,6 @@ class OtpTest < MiniTest::Test
     @opt_in = OptInTwoFactor.new
     @opt_in.email = 'roberto@heapsource.com'
     @opt_in.run_callbacks :create
-
-    @interval_user = IntervalUser.new
-    @interval_user.email = 'roberto@heapsource.com'
-    @interval_user.run_callbacks :create
-
-    @default_interval_user = DefaultIntervalUser.new
-    @default_interval_user.email = 'roberto@heapsource.com'
-    @default_interval_user.run_callbacks :create
   end
 
   def test_authenticate_with_otp
@@ -172,6 +164,9 @@ class OtpTest < MiniTest::Test
   end
 
   def test_otp_interval
+    @interval_user = IntervalUser.new
+    @interval_user.email = 'roberto@heapsource.com'
+    @interval_user.run_callbacks :create
     otp_code = @interval_user.otp_code
     2.times { assert_match(otp_code, @interval_user.otp_code) }
     sleep 5
@@ -179,6 +174,9 @@ class OtpTest < MiniTest::Test
   end
 
   def test_otp_default_interval
+    @default_interval_user = DefaultIntervalUser.new
+    @default_interval_user.email = 'roberto@heapsource.com'
+    @default_interval_user.run_callbacks :create
     otp_code = @default_interval_user.otp_code
     2.times { assert_match(otp_code, @default_interval_user.otp_code) }
     sleep 5
