@@ -228,6 +228,8 @@ user.provisioning_uri("hello", interval: 10) # => 'otpauth://totp/hello?secret=2
 > https://labanskoller.se/blog/2019/07/11/many-common-mobile-authenticator-apps-accept-qr-codes-for-modes-they-dont-support/
 > https://www.ibm.com/docs/en/sva/9.0.7?topic=authentication-configuring-totp-one-time-password-mechanism
 
+So, be careful and aware when using custom intervals/periods for your TOTP codes beyond the default 30 seconds :)
+
 ### Working example
 
 Scan the following barcode with your phone, using Google Authenticator
