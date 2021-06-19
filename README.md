@@ -213,6 +213,21 @@ user.provisioning_uri(nil, issuer: 'MYAPP') #=> 'otpauth://totp/hello@heapsource
 
 This can then be rendered as a QR Code which can be scanned and added to the users list of OTP credentials.
 
+If you define a custom interval for TOTP codes, just as `has_one_time_password interval: 10` (for example), remember to include the interval also in `provisioning_uri` method.
+
+```ruby
+class User < ApplicationRecord
+  has_one_time_password interval: 10
+end
+
+user = User.new
+user.provisioning_uri("hello", interval: 10) # => 'otpauth://totp/hello?secret=2z6hxkdwi3uvrnpn&period=10'
+```
+
+> Note that only some authenticator apps are compatible with custom `period` of tokens, for more details check these links:
+> https://labanskoller.se/blog/2019/07/11/many-common-mobile-authenticator-apps-accept-qr-codes-for-modes-they-dont-support/
+> https://www.ibm.com/docs/en/sva/9.0.7?topic=authentication-configuring-totp-one-time-password-mechanism
+
 ### Working example
 
 Scan the following barcode with your phone, using Google Authenticator
