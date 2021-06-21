@@ -2,7 +2,6 @@ name: Active Model OTP
 
 on:
   push:
-    branches: [main]
   pull_request:
     types: [opened, synchronize, reopened, edited]
 
@@ -39,5 +38,5 @@ jobs:
       - name: Install dependencies
         run: bundle install
 
-      - name: Run tests with Ruby ${{ matrix.ruby-version }} and Rails ${{ matrix.gemfile }}
+      - name: Run tests with Ruby ${{ matrix.ruby-version }} and Gemfile ${{ matrix.gemfile }}
         run: bundle exec rake
