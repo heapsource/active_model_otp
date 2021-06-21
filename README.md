@@ -219,7 +219,7 @@ If you define a custom interval for TOTP codes, just as `has_one_time_password i
 
 ```ruby
 class User < ApplicationRecord
-  has_one_time_password interval: 10 # the interval values is in seconds
+  has_one_time_password interval: 10 # the interval value is in seconds
 end
 
 user = User.new
