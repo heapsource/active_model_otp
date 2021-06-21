@@ -2,6 +2,7 @@ name: Active Model OTP
 
 on:
   push:
+    branches: [main]
   pull_request:
     types: [opened, synchronize, reopened, edited]
 
