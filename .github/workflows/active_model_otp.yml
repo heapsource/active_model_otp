@@ -12,7 +12,11 @@ jobs:
     
     strategy:
       matrix:
+        gemfile: [4.2, 5.0, 5.1, 5.2, 6.0, 6.1]
         ruby-version: [2.3, 2.4, 2.5, 2.6, 2.7, 3.0]
+    
+    env:
+      BUNDLE_GEMFILE: gemfiles/rails_${{ matrix.gemfile }}.gemfile
 
     steps:
       - uses: actions/checkout@v2
@@ -25,5 +29,5 @@ jobs:
       - name: Install dependencies
         run: bundle install
 
-      - name: Run tests with Ruby ${{ matrix.ruby-version }}
+      - name: Run tests with Ruby ${{ matrix.ruby-version }} and Rails ${{ matrix.gemfile }}
         run: bundle exec rake
