@@ -2,9 +2,10 @@ name: Active Model OTP
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    types: [opened, synchronize, reopened, edited]
+    branches: [main]
 
 jobs:
   test:
