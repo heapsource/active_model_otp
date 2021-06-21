@@ -2,9 +2,9 @@ module ActiveModel
   module OneTimePassword
     extend ActiveSupport::Concern
 
-    OTP_DEFAULT_COLUMN_NAME = 'otp_secret_key'
-    OTP_DEFAULT_COUNTER_COLUMN_NAME = 'otp_counter'
-    OTP_DEFAULT_BACKUP_CODES_COLUMN_NAME = 'otp_backup_codes'
+    OTP_DEFAULT_COLUMN_NAME = 'otp_secret_key'.freeze
+    OTP_DEFAULT_COUNTER_COLUMN_NAME = 'otp_counter'.freeze
+    OTP_DEFAULT_BACKUP_CODES_COLUMN_NAME = 'otp_backup_codes'.freeze
     OTP_DEFAULT_DIGITS = 6
     OTP_DEFAULT_BACKUP_CODES_COUNT = 12
     OTP_COUNTER_ENABLED_BY_DEFAULT = false
@@ -17,16 +17,22 @@ module ActiveModel
         class_attribute :otp_digits, :otp_counter_based,
                         :otp_backup_codes_count, :otp_one_time_backup_codes
 
-        self.otp_column_name = (options[:column_name] || OTP_DEFAULT_COLUMN_NAME).to_s
+        self.otp_column_name = (
+          options[:column_name] || OTP_DEFAULT_COLUMN_NAME
+        ).to_s
         self.otp_digits = options[:length] || OTP_DEFAULT_DIGITS
-
-        self.otp_counter_based = (options[:counter_based] || OTP_COUNTER_ENABLED_BY_DEFAULT)
-        self.otp_counter_column_name = (options[:counter_column_name] || OTP_DEFAULT_COUNTER_COLUMN_NAME).to_s
-
+        self.otp_counter_based = (
+          options[:counter_based] || OTP_COUNTER_ENABLED_BY_DEFAULT
+        )
+        self.otp_counter_column_name = (
+          options[:counter_column_name] || OTP_DEFAULT_COUNTER_COLUMN_NAME
+        ).to_s
         self.otp_backup_codes_column_name = (
           options[:backup_codes_column_name] || OTP_DEFAULT_BACKUP_CODES_COLUMN_NAME
         ).to_s
-        self.otp_backup_codes_count = options[:backup_codes_count] || OTP_DEFAULT_BACKUP_CODES_COUNT
+        self.otp_backup_codes_count = (
+          options[:backup_codes_count] || OTP_DEFAULT_BACKUP_CODES_COUNT
+        )
         self.otp_one_time_backup_codes = (
           options[:one_time_backup_codes] || OTP_BACKUP_CODES_ENABLED_BY_DEFAULT
         )
