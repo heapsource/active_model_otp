@@ -213,6 +213,8 @@ user.provisioning_uri(nil, issuer: 'MYAPP') #=> 'otpauth://totp/hello@heapsource
 
 This can then be rendered as a QR Code which can be scanned and added to the users list of OTP credentials.
 
+### Setting up a customer interval 
+
 If you define a custom interval for TOTP codes, just as `has_one_time_password interval: 10` (for example), remember to include the interval also in `provisioning_uri` method.
 
 ```ruby
