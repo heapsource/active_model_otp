@@ -15,7 +15,7 @@ module ActiveModel
 
         self.otp_counter_based = (options[:counter_based] || false)
         self.otp_counter_column_name = (options[:counter_column_name] || "otp_counter").to_s
-        self.otp_interval = options[:interval] || 30
+        self.otp_interval = options[:interval]
 
         self.otp_backup_codes_column_name = (
           options[:backup_codes_column_name] || 'otp_backup_codes'
