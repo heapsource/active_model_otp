@@ -1,9 +1,9 @@
-name: Publish to Rubygems
+name: Active Model OTP - Publish to Rubygems
 
 on:
   workflow_dispatch:
-  #release:
-  #  types: [created]
+  release:
+    types: [created]
 
 jobs:
   publish-to-rubygems:
