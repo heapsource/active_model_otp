@@ -1,7 +1,6 @@
 name: Active Model OTP - Publish to Rubygems
 
 on:
-  workflow_dispatch:
   release:
     types: [created]
 
