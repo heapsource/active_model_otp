@@ -162,4 +162,24 @@ class OtpTest < MiniTest::Test
   def test_otp_random_secret
     assert_match(/^.{32}$/, @user.class.otp_random_secret)
   end
+
+  def test_otp_interval
+    @interval_user = IntervalUser.new
+    @interval_user.email = 'roberto@heapsource.com'
+    @interval_user.run_callbacks :create
+    otp_code = @interval_user.otp_code
+    2.times { assert_match(otp_code, @interval_user.otp_code) }
+    sleep 5
+    refute_match(otp_code, @interval_user.otp_code)
+  end
+
+  def test_otp_default_interval
+    @default_interval_user = DefaultIntervalUser.new
+    @default_interval_user.email = 'roberto@heapsource.com'
+    @default_interval_user.run_callbacks :create
+    otp_code = @default_interval_user.otp_code
+    2.times { assert_match(otp_code, @default_interval_user.otp_code) }
+    sleep 5
+    assert_match(otp_code, @default_interval_user.otp_code)
+  end
 end

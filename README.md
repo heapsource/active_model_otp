@@ -213,6 +213,28 @@ user.provisioning_uri(nil, issuer: 'MYAPP') #=> 'otpauth://totp/hello@heapsource
 
 This can then be rendered as a QR Code which can be scanned and added to the users list of OTP credentials.
 
+### Setting up a customer interval 
+
+If you define a custom interval for TOTP codes, just as `has_one_time_password interval: 10` (for example), remember to include the interval also in `provisioning_uri` method. If not defined, the default value is 30 seconds (according to ROTP gem: https://github.com/mdp/rotp/blob/master/lib/rotp/totp.rb#L9)
+
+```ruby
+class User < ApplicationRecord
+  has_one_time_password interval: 10 # the interval value is in seconds
+end
+
+user = User.new
+user.provisioning_uri("hello", interval: 10) # => 'otpauth://totp/hello?secret=2z6hxkdwi3uvrnpn&period=10'
+
+# This code snippet generates OTP codes that expires every 10 seconds.
+```
+
+**Note**: Only some authenticator apps are compatible with custom `period` of tokens, for more details check these links:
+
+- https://labanskoller.se/blog/2019/07/11/many-common-mobile-authenticator-apps-accept-qr-codes-for-modes-they-dont-support
+- https://www.ibm.com/docs/en/sva/9.0.7?topic=authentication-configuring-totp-one-time-password-mechanism
+
+So, be careful and aware when using custom intervals/periods for your TOTP codes beyond the default 30 seconds :)
+
 ### Working example
 
 Scan the following barcode with your phone, using Google Authenticator
