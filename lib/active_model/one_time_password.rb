@@ -28,7 +28,8 @@ module ActiveModel
           options[:counter_column_name] || OTP_DEFAULT_COUNTER_COLUMN_NAME
         ).to_s
         self.otp_backup_codes_column_name = (
-          options[:backup_codes_column_name] || OTP_DEFAULT_BACKUP_CODES_COLUMN_NAME
+          options[:backup_codes_column_name] || 
+          OTP_DEFAULT_BACKUP_CODES_COLUMN_NAME
         ).to_s
         self.otp_backup_codes_count = (
           options[:backup_codes_count] || OTP_DEFAULT_BACKUP_CODES_COUNT
