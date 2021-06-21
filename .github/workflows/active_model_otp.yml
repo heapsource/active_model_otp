@@ -7,7 +7,7 @@ on:
     types: [opened, synchronize, reopened, edited]
 
 jobs:
-  test:
+  build-and-test:
     runs-on: ubuntu-latest
     
     strategy:
