@@ -226,9 +226,10 @@ user = User.new
 user.provisioning_uri("hello", interval: 10) # => 'otpauth://totp/hello?secret=2z6hxkdwi3uvrnpn&period=10'
 ```
 
-> Note that only some authenticator apps are compatible with custom `period` of tokens, for more details check these links:
-> https://labanskoller.se/blog/2019/07/11/many-common-mobile-authenticator-apps-accept-qr-codes-for-modes-they-dont-support/
-> https://www.ibm.com/docs/en/sva/9.0.7?topic=authentication-configuring-totp-one-time-password-mechanism
+**Note**: that only some authenticator apps are compatible with custom `period` of tokens, for more details check these links:
+
+- https://labanskoller.se/blog/2019/07/11/many-common-mobile-authenticator-apps-accept-qr-codes-for-modes-they-dont-support/
+- https://www.ibm.com/docs/en/sva/9.0.7?topic=authentication-configuring-totp-one-time-password-mechanism
 
 So, be careful and aware when using custom intervals/periods for your TOTP codes beyond the default 30 seconds :)
 
