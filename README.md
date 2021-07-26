@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/heapsource/active_model_otp.png)](https://travis-ci.org/heapsource/active_model_otp)
+[![Active Model OTP](https://github.com/heapsource/active_model_otp/actions/workflows/active_model_otp.yml/badge.svg?branch=main)](https://github.com/heapsource/active_model_otp/actions/workflows/active_model_otp.yml)
 [![Gem Version](https://badge.fury.io/rb/active_model_otp.svg)](http://badge.fury.io/rb/active_model_otp)
 [![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com)
 
