@@ -72,6 +72,7 @@ module ActiveModel
       end
 
       def authenticate_otp(code, options = {})
+        return false if code.nil? || code.empty?
         return true if backup_codes_enabled? && authenticate_backup_code(code)
 
         if otp_counter_based
