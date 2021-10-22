@@ -32,7 +32,7 @@ class OtpTest < MiniTest::Test
     code = @visitor.otp_code
     assert @visitor.authenticate_otp(code)
   end
-  
+
   def test_authenticate_with_otp_passing_false_or_empty_codes
     refute @user.authenticate_otp(nil)
     refute @user.authenticate_otp('')
