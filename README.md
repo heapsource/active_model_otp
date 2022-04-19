@@ -98,9 +98,31 @@ sleep 30 # lets wait again
 user.authenticate_otp('186522', drift: 60) # => true
 ```
 
+### Preventing reuse of Time based OTP's
+
+By keeping track of the last time a user's OTP was verified, we can prevent token reuse during the interval window (default 30 seconds). It is useful with SMS, that is commonly used in combination with `drift` to extend the life of the code.
+
+```ruby
+rails g migration AddLastOtpAtToUsers last_otp_at:integer
+=>
+      invoke  active_record
+      create    db/migrate/20220407010931_add_last_otp_at_to_users.rb
+```
+
+```ruby
+class User < ApplicationRecord
+  has_one_time_password after_column_name: :last_otp_at
+end
+```
+
+```ruby
+user.authenticate_otp('186522') # => true
+user.authenticate_otp('186522') # => false
+```
+
 ## Counter based OTP
 
-An additonal counter field is required in our ``User`` Model
+An additional counter field is required in our ``User`` Model
 
 ```ruby
 rails g migration AddCounterForOtpToUsers otp_counter:integer
@@ -213,7 +235,7 @@ user.provisioning_uri(nil, issuer: 'MYAPP') #=> 'otpauth://totp/hello@heapsource
 
 This can then be rendered as a QR Code which can be scanned and added to the users list of OTP credentials.
 
-### Setting up a customer interval 
+### Setting up a customer interval
 
 If you define a custom interval for TOTP codes, just as `has_one_time_password interval: 10` (for example), remember to include the interval also in `provisioning_uri` method. If not defined, the default value is 30 seconds (according to ROTP gem: https://github.com/mdp/rotp/blob/master/lib/rotp/totp.rb#L9)
 

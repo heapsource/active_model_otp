@@ -13,7 +13,7 @@ module ActiveModel
     module ClassMethods
       def has_one_time_password(options = {})
         cattr_accessor :otp_column_name, :otp_counter_column_name,
-                       :otp_backup_codes_column_name
+                       :otp_backup_codes_column_name, :otp_after_column_name
         class_attribute :otp_digits, :otp_counter_based,
                         :otp_backup_codes_count, :otp_one_time_backup_codes,
                         :otp_interval
@@ -29,6 +29,7 @@ module ActiveModel
           options[:counter_column_name] || OTP_DEFAULT_COUNTER_COLUMN_NAME
         ).to_s
         self.otp_interval = options[:interval]
+        self.otp_after_column_name = options[:after_column_name]
         self.otp_backup_codes_column_name = (
           options[:backup_codes_column_name] ||
           OTP_DEFAULT_BACKUP_CODES_COLUMN_NAME
@@ -167,11 +168,18 @@ module ActiveModel
           digits: otp_digits,
           interval: otp_interval
         )
-        if (drift = options[:drift])
-          totp.verify(code, drift_behind: drift)
-        else
-          totp.verify(code)
+        otp_after = if otp_after_column_name_enabled?
+                      public_send(otp_after_column_name)
+                    end
+        totp.verify(code, drift_behind: options[:drift] || 0, after: otp_after)
+            .tap do |updated_last_otp_at|
+          updated_last_otp_at && otp_after_column_name_enabled? &&
+            update(otp_after_column_name => updated_last_otp_at)
         end
+      end
+
+      def otp_after_column_name_enabled?
+        otp_after_column_name && respond_to?(otp_after_column_name)
       end
 
       def hotp_code(options = {})

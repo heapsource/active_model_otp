@@ -23,6 +23,10 @@ class OtpTest < MiniTest::Test
     @opt_in = OptInTwoFactor.new
     @opt_in.email = 'roberto@heapsource.com'
     @opt_in.run_callbacks :create
+
+    @after_user = AfterUser.new
+    @after_user.email = 'roberto@heapsource.com'
+    @after_user.run_callbacks :create
   end
 
   def test_authenticate_with_otp
@@ -86,6 +90,18 @@ class OtpTest < MiniTest::Test
 
     code = @visitor.otp_code(Time.now - 30)
     assert_equal true, @visitor.authenticate_otp(code, drift: 60)
+  end
+
+  def test_authenticate_with_otp_when_after_is_allowed
+    code = @user.otp_code
+    assert_equal true, @user.authenticate_otp(code)
+    assert_equal true, @user.authenticate_otp(code)
+
+    code = @after_user.otp_code
+    assert_equal true, @after_user.authenticate_otp(code)
+    assert_equal false, @after_user.authenticate_otp(code)
+    assert_equal false, @after_user.authenticate_otp('1111111')
+    assert_equal false, @after_user.authenticate_otp(code)
   end
 
   def test_authenticate_with_backup_code
