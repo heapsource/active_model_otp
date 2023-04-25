@@ -172,7 +172,7 @@ module ActiveModel
       end
 
       def totp_code(options = {})
-        time = if options.is_a?(Hash) ? options.fetch(:time, Time.now) : options
+        time = options.is_a?(Hash) ? options.fetch(:time, Time.now) : options
 
         ROTP::TOTP.new(otp_column, digits: otp_digits, interval: otp_interval).at(time)
       end
