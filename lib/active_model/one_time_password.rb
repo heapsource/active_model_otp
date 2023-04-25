@@ -18,28 +18,15 @@ module ActiveModel
                         :otp_backup_codes_count, :otp_one_time_backup_codes,
                         :otp_interval
 
-        self.otp_column_name = (
-          options[:column_name] || OTP_DEFAULT_COLUMN_NAME
-        ).to_s
+        self.otp_column_name = (options[:column_name] || OTP_DEFAULT_COLUMN_NAME).to_s
         self.otp_digits = options[:length] || OTP_DEFAULT_DIGITS
-        self.otp_counter_based = (
-          options[:counter_based] || OTP_COUNTER_ENABLED_BY_DEFAULT
-        )
-        self.otp_counter_column_name = (
-          options[:counter_column_name] || OTP_DEFAULT_COUNTER_COLUMN_NAME
-        ).to_s
+        self.otp_counter_based = options[:counter_based] || OTP_COUNTER_ENABLED_BY_DEFAULT
+        self.otp_counter_column_name = (options[:counter_column_name] || OTP_DEFAULT_COUNTER_COLUMN_NAME).to_s
         self.otp_interval = options[:interval]
         self.otp_after_column_name = options[:after_column_name]
-        self.otp_backup_codes_column_name = (
-          options[:backup_codes_column_name] ||
-          OTP_DEFAULT_BACKUP_CODES_COLUMN_NAME
-        ).to_s
-        self.otp_backup_codes_count = (
-          options[:backup_codes_count] || OTP_DEFAULT_BACKUP_CODES_COUNT
-        )
-        self.otp_one_time_backup_codes = (
-          options[:one_time_backup_codes] || OTP_BACKUP_CODES_ENABLED_BY_DEFAULT
-        )
+        self.otp_backup_codes_column_name = (options[:backup_codes_column_name] || OTP_DEFAULT_BACKUP_CODES_COLUMN_NAME).to_s
+        self.otp_backup_codes_count = options[:backup_codes_count] || OTP_DEFAULT_BACKUP_CODES_COUNT
+        self.otp_one_time_backup_codes = options[:one_time_backup_codes] || OTP_BACKUP_CODES_ENABLED_BY_DEFAULT
 
         include InstanceMethodsOnActivation
 
@@ -96,13 +83,9 @@ module ActiveModel
         account ||= ""
 
         if otp_counter_based
-          ROTP::HOTP
-            .new(otp_column, options)
-            .provisioning_uri(account, self.otp_counter)
+          ROTP::HOTP.new(otp_column, options).provisioning_uri(account, self.otp_counter)
         else
-          ROTP::TOTP
-            .new(otp_column, options)
-            .provisioning_uri(account)
+          ROTP::TOTP.new(otp_column, options).provisioning_uri(account)
         end
       end
 
@@ -134,6 +117,7 @@ module ActiveModel
         options ||= {}
         options[:except] = Array(options[:except])
         options[:except] << self.class.otp_column_name
+
         super(options)
       end
 
@@ -155,26 +139,22 @@ module ActiveModel
       def authenticate_hotp(code, options = {})
         hotp = ROTP::HOTP.new(otp_column, digits: otp_digits)
         result = hotp.verify(code, otp_counter)
+
         if result && options[:auto_increment]
           self.otp_counter += 1
           save if respond_to?(:changed?) && !new_record?
         end
+
         result
       end
 
       def authenticate_totp(code, options = {})
-        totp = ROTP::TOTP.new(
-          otp_column,
-          digits: otp_digits,
-          interval: otp_interval
-        )
-        otp_after = if otp_after_column_name_enabled?
-                      public_send(otp_after_column_name)
-                    end
-        totp.verify(code, drift_behind: options[:drift] || 0, after: otp_after)
-            .tap do |updated_last_otp_at|
-          updated_last_otp_at && otp_after_column_name_enabled? &&
-            update(otp_after_column_name => updated_last_otp_at)
+        totp = ROTP::TOTP.new(otp_column, digits: otp_digits, interval: otp_interval)
+
+        otp_after = public_send(otp_after_column_name) if otp_after_column_name_enabled?
+
+        totp.verify(code, drift_behind: options[:drift] || 0, after: otp_after).tap do |updated_last_otp_at|
+          updated_last_otp_at && otp_after_column_name_enabled? && update(otp_after_column_name => updated_last_otp_at)
         end
       end
 
@@ -187,20 +167,14 @@ module ActiveModel
           self.otp_counter += 1
           save if respond_to?(:changed?) && !new_record?
         end
+
         ROTP::HOTP.new(otp_column, digits: otp_digits).at(otp_counter)
       end
 
       def totp_code(options = {})
-        time = if options.is_a?(Hash)
-                 options.fetch(:time, Time.now)
-               else
-                 options
-               end
-        ROTP::TOTP.new(
-          otp_column,
-          digits: otp_digits,
-          interval: otp_interval
-        ).at(time)
+        time = if options.is_a?(Hash) ? options.fetch(:time, Time.now) : options
+
+        ROTP::TOTP.new(otp_column, digits: otp_digits, interval: otp_interval).at(time)
       end
 
       def authenticate_backup_code(code)
