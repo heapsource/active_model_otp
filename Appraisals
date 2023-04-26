@@ -34,3 +34,10 @@ appraise "rails-6.1" do
   gem "activemodel-serializers-xml"
   gem "sqlite3", "~> 1.4"
 end
+
+appraise "rails-7.0" do
+  gem "activerecord", "~> 7.0"
+  gem "activemodel", "~> 7.0"
+  gem "activemodel-serializers-xml"
+  gem "sqlite3", "~> 1.6"
+end
