@@ -29,6 +29,10 @@ class OtpTest < MiniTest::Test
     @after_user = AfterUser.new
     @after_user.email = 'roberto@heapsource.com'
     @after_user.run_callbacks :create
+
+    @user_with_encrypted_code = UserWithEncryptedCodes.new
+    @user_with_encrypted_code.email = 'roberto@heapsource.com'
+    @user_with_encrypted_code.run_callbacks :create
   end
 
   def test_authenticate_with_otp
@@ -112,13 +116,22 @@ class OtpTest < MiniTest::Test
 
     backup_code = @user.public_send(@user.otp_backup_codes_column_name).last
     @user.otp_regenerate_backup_codes
-    assert_equal true, !@user.authenticate_otp(backup_code)
+    assert_equal false, @user.authenticate_otp(backup_code)
+  end
+
+  def test_authenticate_with_encrypted_backup_code
+    backup_code = @user_with_encrypted_code.plain_backup_codes.first
+    assert_equal true, @user_with_encrypted_code.authenticate_otp(backup_code)
+
+    backup_code = @user_with_encrypted_code.plain_backup_codes.last
+    @user_with_encrypted_code.otp_regenerate_backup_codes
+    assert_equal false, @user.authenticate_otp(backup_code)
   end
 
   def test_authenticate_with_one_time_backup_code
     backup_code = @user.public_send(@user.otp_backup_codes_column_name).first
     assert_equal true, @user.authenticate_otp(backup_code)
-    assert_equal true, !@user.authenticate_otp(backup_code)
+    assert_equal false, @user.authenticate_otp(backup_code)
   end
 
   def test_otp_code

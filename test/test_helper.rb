@@ -19,4 +19,6 @@ end
 ActiveRecord::Base.establish_connection adapter: "sqlite3", database: ":memory:"
 load "#{ File.dirname(__FILE__) }/schema.rb"
 
+ActiveModel::OneTimePassword.min_bcrypt_cost = true
+
 Dir["models/*.rb"].each {|file| require file }

@@ -1,5 +1,6 @@
 require "active_model"
 require "active_support/core_ext/module/attribute_accessors"
+require "bcrypt"
 require "cgi"
 require "rotp"
 require "active_model/one_time_password"
