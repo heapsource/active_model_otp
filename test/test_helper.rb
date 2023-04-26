@@ -9,6 +9,7 @@ require "active_model_otp"
 require "minitest/autorun"
 require "minitest/unit"
 require "active_record"
+require "active_support/testing/time_helpers"
 
 begin
   require "activemodel-serializers-xml"

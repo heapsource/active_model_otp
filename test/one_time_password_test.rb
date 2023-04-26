@@ -3,6 +3,8 @@
 require 'test_helper'
 
 class OtpTest < MiniTest::Test
+  include ActiveSupport::Testing::TimeHelpers
+
   def setup
     @user = User.new
     @user.email = 'roberto@heapsource.com'
@@ -131,7 +133,7 @@ class OtpTest < MiniTest::Test
 
   def test_otp_code_without_specific_length
     assert_match(/^\d{6}$/, @user.otp_code(2160).to_s)
-    assert_operator(@user.otp_code(2160).to_s.length, :<=, 6)
+    assert @user.otp_code(2160).to_s.length <= 6
   end
 
   def test_provisioning_uri_with_provided_account
@@ -162,13 +164,8 @@ class OtpTest < MiniTest::Test
       &issuer=Example$
     }x
 
-    assert_match(
-      account, @user.provisioning_uri('roberto', issuer: 'Example')
-    )
-
-    assert_match(
-      account, @visitor.provisioning_uri('roberto', issuer: 'Example')
-    )
+    assert_match account, @user.provisioning_uri('roberto', issuer: 'Example')
+    assert_match account, @visitor.provisioning_uri('roberto', issuer: 'Example')
 
     assert_match email, @user.provisioning_uri(nil, issuer: 'Example')
     assert_match email, @visitor.provisioning_uri(nil, issuer: 'Example')
@@ -202,8 +199,10 @@ class OtpTest < MiniTest::Test
     @interval_user.run_callbacks :create
     otp_code = @interval_user.otp_code
     2.times { assert_match(otp_code, @interval_user.otp_code) }
-    sleep 5
-    refute_match(otp_code, @interval_user.otp_code)
+
+    travel 5.seconds do
+      refute_match(otp_code, @interval_user.otp_code)
+    end
   end
 
   def test_otp_default_interval
@@ -211,8 +210,11 @@ class OtpTest < MiniTest::Test
     @default_interval_user.email = 'roberto@heapsource.com'
     @default_interval_user.run_callbacks :create
     otp_code = @default_interval_user.otp_code
+
     2.times { assert_match(otp_code, @default_interval_user.otp_code) }
-    sleep 5
-    assert_match(otp_code, @default_interval_user.otp_code)
+
+    travel 5.seconds do
+      assert_match(otp_code, @default_interval_user.otp_code)
+    end
   end
 end
