@@ -1,4 +1,4 @@
-class User
+class UserWithEncryptedCodes
   extend ActiveModel::Callbacks
   include ActiveModel::Serializers::JSON
   include ActiveModel::Validations
@@ -7,9 +7,5 @@ class User
   define_model_callbacks :create
   attr_accessor :otp_secret_key, :otp_backup_codes, :email
 
-  has_one_time_password one_time_backup_codes: true, backup_codes_encrypted: false
-
-  def attributes
-    { "otp_secret_key" => otp_secret_key, "email" => email }
-  end
+  has_one_time_password backup_codes_encrypted: true
 end

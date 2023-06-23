@@ -2,6 +2,11 @@ module ActiveModel
   module OneTimePassword
     extend ActiveSupport::Concern
 
+    class << self
+      attr_accessor :min_bcrypt_cost # :nodoc:
+    end
+    self.min_bcrypt_cost = false
+
     OTP_DEFAULT_COLUMN_NAME = 'otp_secret_key'.freeze
     OTP_DEFAULT_COUNTER_COLUMN_NAME = 'otp_counter'.freeze
     OTP_DEFAULT_BACKUP_CODES_COLUMN_NAME = 'otp_backup_codes'.freeze
@@ -9,6 +14,7 @@ module ActiveModel
     OTP_DEFAULT_BACKUP_CODES_COUNT = 12
     OTP_COUNTER_ENABLED_BY_DEFAULT = false
     OTP_BACKUP_CODES_ENABLED_BY_DEFAULT = false
+    OTP_BACKUP_CODES_ENCRYPTED_BY_DEFAULT = true
 
     module ClassMethods
       def has_one_time_password(options = {})
@@ -16,7 +22,7 @@ module ActiveModel
                        :otp_backup_codes_column_name, :otp_after_column_name
         class_attribute :otp_digits, :otp_counter_based,
                         :otp_backup_codes_count, :otp_one_time_backup_codes,
-                        :otp_interval
+                        :otp_interval, :otp_backup_codes_encrypted
 
         self.otp_column_name = (options[:column_name] || OTP_DEFAULT_COLUMN_NAME).to_s
         self.otp_digits = options[:length] || OTP_DEFAULT_DIGITS
@@ -27,13 +33,14 @@ module ActiveModel
         self.otp_backup_codes_column_name = (options[:backup_codes_column_name] || OTP_DEFAULT_BACKUP_CODES_COLUMN_NAME).to_s
         self.otp_backup_codes_count = options[:backup_codes_count] || OTP_DEFAULT_BACKUP_CODES_COUNT
         self.otp_one_time_backup_codes = options[:one_time_backup_codes] || OTP_BACKUP_CODES_ENABLED_BY_DEFAULT
+        self.otp_backup_codes_encrypted = options.fetch(:backup_codes_encrypted, OTP_BACKUP_CODES_ENCRYPTED_BY_DEFAULT)
 
         include InstanceMethodsOnActivation
 
         before_create(**options.slice(:if, :unless)) do
           self.otp_regenerate_secret if !otp_column
           self.otp_regenerate_counter if otp_counter_based && !otp_counter
-          otp_regenerate_backup_codes if backup_codes_enabled?
+          self.otp_regenerate_backup_codes if backup_codes_enabled?
         end
 
         if respond_to?(:attributes_protected_by_default)
@@ -51,6 +58,8 @@ module ActiveModel
     end
 
     module InstanceMethodsOnActivation
+      attr_accessor :plain_backup_codes
+
       def otp_regenerate_secret
         self.otp_column = self.class.otp_random_secret
       end
@@ -127,6 +136,15 @@ module ActiveModel
           otp.generate_otp((SecureRandom.random_number(9e5) + 1e5).to_i)
         end
 
+        if self.class.otp_backup_codes_encrypted
+          self.plain_backup_codes = backup_codes
+
+          backup_codes = backup_codes.map do |code|
+            cost = ActiveModel::OneTimePassword.min_bcrypt_cost ? BCrypt::Engine::MIN_COST : BCrypt::Engine.cost
+            BCrypt::Password.create(code, cost: cost)
+          end
+        end
+
         public_send("#{self.class.otp_backup_codes_column_name}=", backup_codes)
       end
 
@@ -180,10 +198,18 @@ module ActiveModel
       def authenticate_backup_code(code)
         backup_codes_column_name = self.class.otp_backup_codes_column_name
         backup_codes = public_send(backup_codes_column_name)
-        return false unless backup_codes.present? && backup_codes.include?(code)
+
+        return false unless backup_codes.present?
+
+        valid_code = backup_codes.find do |backup_code|
+          backup_code = BCrypt::Password.new(backup_code) if self.class.otp_backup_codes_encrypted
+          backup_code == code
+        end
+
+        return false unless valid_code
 
         if self.class.otp_one_time_backup_codes
-          backup_codes.delete(code)
+          backup_codes.delete(valid_code)
           public_send("#{backup_codes_column_name}=", backup_codes)
           save if respond_to?(:changed?) && !new_record?
         end
