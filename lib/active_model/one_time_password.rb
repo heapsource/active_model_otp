@@ -114,7 +114,7 @@ module ActiveModel
       end
 
       def serializable_hash(options = nil)
-        options ||= {}
+        options = options ? options.dup : {}
         options[:except] = Array(options[:except])
         options[:except] << self.class.otp_column_name
 
